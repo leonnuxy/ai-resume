@@ -101,6 +101,34 @@ def analyze_document_structure(text: str) -> dict:
         print(f"AI analysis error: {str(e)}")
         return {}
 
+def process_word(word: dict, base_size: float = None) -> dict:
+    """Process a single word and return its formatting."""
+    if not word['text'].strip():
+        return {}
+    
+    size = word['size']
+    normalized_size = round((size / base_size) * 10, 1) if base_size else 10
+    
+    return {
+        'text': word['text'].strip(),
+        'font_size': normalized_size,
+        'top': word['top'],
+        'bottom': word['bottom']
+    }
+
+def calculate_line_spacing(sections: list) -> dict:
+    """Calculate line spacing between sections."""
+    spacing = {}
+    sorted_sections = sorted(sections, key=lambda x: x['top'])
+    
+    for i in range(len(sorted_sections)-1):
+        curr, next_sect = sorted_sections[i], sorted_sections[i+1]
+        space = next_sect['top'] - curr['bottom']
+        if space > 0:
+            spacing[curr['text']] = min(space / 2, 10)
+    
+    return spacing
+
 def extract_pdf_formatting(file_path: str) -> dict:
     formatting = {
         'sections': [],
@@ -116,37 +144,17 @@ def extract_pdf_formatting(file_path: str) -> dict:
                 words = page.extract_words(keep_blank_chars=True)
                 text += page.extract_text() + "\n"
                 
-                base_size = None
                 sizes = [word['size'] for word in words if word['text'].strip()]
-                if sizes:
-                    base_size = sorted(set(sizes), key=sizes.count)[-1]
+                base_size = sorted(set(sizes), key=sizes.count)[-1] if sizes else None
                 
                 for word in words:
-                    if word['text'].strip():
-                        size = word['size']
-                        if base_size:
-                            normalized_size = round((size / base_size) * 10, 1)
-                        else:
-                            normalized_size = 10
-                            
-                        formatting['sections'].append({
-                            'text': word['text'].strip(),
-                            'font_size': normalized_size,
-                            'top': word['top'],
-                            'bottom': word['bottom']
-                        })
+                    section = process_word(word, base_size)
+                    if section:
+                        formatting['sections'].append(section)
             
-            # Get AI analysis of the document structure
             formatting['ai_analysis'] = analyze_document_structure(text)
+            formatting['line_spacing'] = calculate_line_spacing(formatting['sections'])
             
-            # Calculate line spacing
-            sorted_sections = sorted(formatting['sections'], key=lambda x: x['top'])
-            for i in range(len(sorted_sections)-1):
-                curr = sorted_sections[i]
-                next_sect = sorted_sections[i+1]
-                spacing = next_sect['top'] - curr['bottom']
-                if spacing > 0:
-                    formatting['line_spacing'][curr['text']] = min(spacing / 2, 10)
     except Exception as e:
         print(f"Error extracting formatting: {str(e)}")
     
@@ -175,17 +183,6 @@ def parse_txt(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
         return file.read()
 
-def replace_name_with_test(text):
-    """Replace the first occurrence of a name-like pattern with 'Test'"""
-    # Look for a name in the first few lines
-    lines = text.split('\n')
-    for i, line in enumerate(lines[:5]):  # Check first 5 lines
-        # Look for lines that are 2-3 words long and contain only letters
-        words = line.strip().split()
-        if 2 <= len(words) <= 3 and all(word.replace('.', '').isalpha() for word in words):
-            lines[i] = 'Test'
-            break
-    return '\n'.join(lines)
 
 @app.before_request
 def make_session_permanent():
@@ -224,8 +221,12 @@ def upload_file():
             elif file_ext == 'txt':
                 text = parse_txt(file_path)
             
-            modified_text = replace_name_with_test(text)
+            # Anonymize personal information in text
+            modified_text = text
+            name_pattern = r'\b[A-Z][a-z]+ [A-Z][a-z]+\b'
+            modified_text = re.sub(name_pattern, 'Test Name', modified_text)
             
+            # Clear and update session data
             session.clear()
             session['modified_text'] = modified_text
             session['original_file_type'] = file_ext
@@ -238,6 +239,7 @@ def upload_file():
             return render_template('result.html', content=modified_text)
             
         except Exception as e:
+            print(f"Error processing file: {str(e)}")
             flash('Error processing file')
             return redirect(url_for('index'))
     else:
@@ -257,100 +259,82 @@ def create_docx_file(text: str) -> Tuple[io.BytesIO, str]:
     file_data.seek(0)
     return file_data, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 
-def draw_formatted_text(canvas, text: str, y: float, font_size: float, is_bullet: bool = False) -> float:
-    """Draw text with proper formatting and return new y position."""
-    indent = 90 if is_bullet else 72
-    width = 6.5 if is_bullet else 7
-    wrapped_lines = simpleSplit(text, "Helvetica", font_size, width * inch)
+def apply_text_formatting(text: str, format_info: dict) -> tuple:
+    """Apply formatting to text and return font settings."""
+    font_size = format_info.get('size', 10)
+    spacing = format_info.get('spacing', 2)
+    is_header = format_info.get('is_header', False)
+    font_name = "Helvetica-Bold" if is_header else "Helvetica"
+    return font_name, font_size, spacing
+
+def get_text_format(line: str, text_format_map: dict, default_font_size: int = 10) -> dict:
+    """Get formatting for a line of text."""
+    for original_text, format_info in text_format_map.items():
+        if line.strip() in original_text or original_text in line.strip():
+            return format_info
+    return {'size': default_font_size, 'spacing': 2, 'is_header': False}
+
+def draw_text_line(canvas, line: str, y: float, margin: int, font_name: str, font_size: float) -> float:
+    """Draw a line of text and return new y position."""
+    if not line.strip():
+        return y - font_size
     
-    for i, line in wrapped_lines:
-        canvas.drawString(indent if i > 0 and is_bullet else 72, y, line)
-        y -= 14
-    
+    canvas.setFont(font_name, font_size)
+    canvas.drawString(margin, y, line)
+    return y
+
+def process_formatted_text(c, text: str, text_format_map: dict, y: float, margin: int, default_font_size: int) -> float:
+    """Process text with formatting and return new y position."""
+    for line in text.split('\n'):
+        if y < 50:
+            c.showPage()
+            y = 750
+        
+        format_info = get_text_format(line, text_format_map, default_font_size)
+        font_name, font_size, spacing = apply_text_formatting(line, format_info)
+        y = draw_text_line(c, line, y, margin, font_name, font_size)
+        y -= (font_size + spacing)
+    return y
+
+def process_simple_text(c, text: str, y: float, margin: int, default_font_size: int) -> float:
+    """Process text without formatting and return new y position."""
+    for line in text.split('\n'):
+        if y < 50:
+            c.showPage()
+            y = 750
+            c.setFont("Helvetica", default_font_size)
+        
+        y = draw_text_line(c, line, y, margin, "Helvetica", default_font_size)
+        y -= (default_font_size + 2)
     return y
 
 def create_formatted_pdf(text: str, formatting: dict = None):
     file_data = io.BytesIO()
     c = canvas.Canvas(file_data, pagesize=letter)
-    default_font_size = 10
     y = 750
-    margin = 72  # 1 inch margin
+    margin = 72
+    default_font_size = 10
     
     if formatting and 'sections' in formatting:
-        # Use AI analysis if available
         ai_analysis = formatting.get('ai_analysis', {})
         ai_sections = {section['text']: section for section in ai_analysis.get('sections', [])} if ai_analysis else {}
         
-        # Create word-to-formatting mapping with AI-enhanced decisions
-        text_format_map = {}
-        for section in formatting['sections']:
-            text = section['text']
-            ai_info = ai_sections.get(text, {})
-            
-            base_size = section['font_size'] / 2
-            if ai_info.get('is_header', False):
-                base_size *= 1.2  # Make headers slightly larger
-            
-            text_format_map[text] = {
-                'size': base_size,
-                'spacing': formatting['line_spacing'].get(text, 2),
-                'is_header': ai_info.get('is_header', False)
+        text_format_map = {
+            section['text']: {
+                'size': section['font_size'] / 2 * (1.2 if ai_sections.get(section['text'], {}).get('is_header', False) else 1),
+                'spacing': formatting['line_spacing'].get(section['text'], 2),
+                'is_header': ai_sections.get(section['text'], {}).get('is_header', False)
             }
+            for section in formatting['sections']
+        }
         
-        paragraphs = text.split('\n\n')
-        for paragraph in paragraphs:
-            lines = paragraph.split('\n')
-            
-            for line in lines:
-                if not line.strip():  # Skip empty lines
-                    y -= default_font_size
-                    continue
-                    
-                if y < 50:  # Create new page when near bottom
-                    c.showPage()
-                    y = 750
-                
-                font_size = default_font_size
-                spacing = 2
-                is_header = False
-                
-                # Find best matching format for this line
-                for original_text, format_info in text_format_map.items():
-                    if line.strip() in original_text or original_text in line.strip():
-                        font_size = format_info['size']
-                        spacing = format_info['spacing']
-                        is_header = format_info['is_header']
-                        break
-                
-                # Apply bold for headers
-                font_name = "Helvetica-Bold" if is_header else "Helvetica"
-                c.setFont(font_name, font_size)
-                
-                # Draw left-aligned text
-                c.drawString(margin, y, line)
-                y -= (font_size + spacing)
-            
-            # Add extra space between paragraphs
+        for paragraph in text.split('\n\n'):
+            y = process_formatted_text(c, paragraph, text_format_map, y, margin, default_font_size)
             y -= 10
     else:
-        # Fallback to simple formatting
         c.setFont("Helvetica", default_font_size)
-        paragraphs = text.split('\n\n')
-        for paragraph in paragraphs:
-            lines = paragraph.split('\n')
-            for line in lines:
-                if not line.strip():  # Skip empty lines
-                    y -= default_font_size
-                    continue
-                    
-                if y < 50:  # Create new page when near bottom
-                    c.showPage()
-                    y = 750
-                    c.setFont("Helvetica", default_font_size)
-                
-                # Draw left-aligned text
-                c.drawString(margin, y, line)
-                y -= (default_font_size + 2)
+        for paragraph in text.split('\n\n'):
+            y = process_simple_text(c, paragraph, y, margin, default_font_size)
             y -= 10
     
     c.save()
@@ -374,8 +358,8 @@ def download_file():
         # Create formatted PDF with the actual modified text and formatting
         file_data, mimetype = create_formatted_pdf(modified_text, formatting)
         
-        # Use original filename if available, otherwise default to test.pdf
-        original_filename = session.get('original_filename', 'test.pdf')
+        # Use original filename if available, otherwise default to alt_resume.pdf
+        original_filename = session.get('original_filename', 'alt_resume.pdf')
         download_name = f"modified_{original_filename}"
         if not download_name.endswith('.pdf'):
             download_name = download_name.rsplit('.', 1)[0] + '.pdf'
