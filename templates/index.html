@@ -17,6 +17,7 @@
           <label for="resume" class="upload-icon">
             <img src="{{ url_for('static', filename='icons/upload_icon.png') }}" alt="Upload" />
           </label>
+          <span id="file-name" class="file-name">No file selected</span>
           <input id="resume" type="file" name="resume" accept=".pdf,.docx,.txt" required>
         </div>
         <button type="submit" class="submit-btn">Parse Resume</button>
@@ -32,5 +33,12 @@
         {% endif %}
       {% endwith %}
     </div>
+
+    <script>
+      document.getElementById('resume').addEventListener('change', function(e) {
+        const fileName = e.target.files[0] ? e.target.files[0].name : 'No file selected';
+        document.getElementById('file-name').textContent = fileName;
+      });
+    </script>
   </body>
 </html>

@@ -223,8 +223,6 @@ def upload_file():
             
             # Anonymize personal information in text
             modified_text = text
-            name_pattern = r'\b[A-Z][a-z]+ [A-Z][a-z]+\b'
-            modified_text = re.sub(name_pattern, 'Test Name', modified_text)
             
             # Clear and update session data
             session.clear()

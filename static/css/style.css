@@ -97,6 +97,15 @@
     transform: scale(1.1);
   }
   
+  /* File name display */
+  .file-name {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
+    font-style: italic;
+  }
+  
   /* Submit button (50% width of container) */
   .submit-btn {
     display: block;
