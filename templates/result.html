@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Optimizer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for message in messages %}
+                    <div class="alert">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="split-container">
+        <!-- Left side: Preview pane -->
+        <div class="preview-pane">
+            <h2>Resume Preview</h2>
+            <div class="preview-content">
+                <div class="resume-content">
+                    <pre>{{ content }}</pre>
+                </div>
+                {% if optimized_content %}
+                <div class="suggestions-preview">
+                    <h3>AI Suggestions</h3>
+                    <div class="suggestions">{{ optimized_content | safe }}</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Right side: Controls -->
+        <div class="controls-pane">
+            <div class="job-description-section">
+                <h3>Optimize for Job</h3>
+                <form id="optimizeForm" action="{{ url_for('optimize_resume') }}" method="post">
+                    <textarea name="job_description" rows="10" required placeholder="Paste the job description here..."></textarea>
+                    <button type="submit" class="optimize-btn">Analyze & Optimize</button>
+                    <div class="progress-container hidden" id="progressContainer">
+                        <div class="progress-bar" id="aiProgress">
+                            <div class="progress-fill"></div>
+                        </div>
+                        <div class="progress-status">AI Analysis: <span id="progressStatus">Waiting for job description...</span></div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="actions-section">
+                <a href="{{ url_for('download_file') }}" class="action-btn download-btn">
+                    <span class="btn-icon">⭳</span>
+                    Download Modified Resume
+                </a>
+                <a href="{{ url_for('index') }}" class="action-btn back-btn">
+                    <span class="btn-icon">↺</span>
+                    Upload New Resume
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('optimizeForm').addEventListener('submit', function(e) {
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.querySelector('.progress-fill');
+            const progressStatus = document.getElementById('progressStatus');
+            
+            progressContainer.classList.remove('hidden');
+            progressBar.style.width = '0%';
+            progressStatus.textContent = 'Starting analysis...';
+            
+            // Simulate progress while waiting for response
+            let progress = 0;
+            const interval = setInterval(() => {
+                if (progress < 90) {
+                    progress += 10;
+                    progressBar.style.width = progress + '%';
+                    if (progress < 30) {
+                        progressStatus.textContent = 'Analyzing resume structure...';
+                    } else if (progress < 60) {
+                        progressStatus.textContent = 'Comparing with job requirements...';
+                    } else {
+                        progressStatus.textContent = 'Generating optimization suggestions...';
+                    }
+                }
+            }, 500);
+
+            // Store interval ID in form data to clear it after response
+            this.dataset.progressInterval = interval;
+        });
+
+        // If optimization results are present, show 100% progress
+        if (document.querySelector('.optimization-results')) {
+            document.querySelector('.progress-fill').style.width = '100%';
+            document.getElementById('progressStatus').textContent = 'Analysis complete!';
+        }
+    </script>
+</body>
+</html> 
