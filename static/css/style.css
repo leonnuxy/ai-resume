@@ -126,8 +126,6 @@
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   }
   
-  
-  
 
 /* Utility Classes */
 .hidden {
@@ -137,8 +135,8 @@
 /* Split Layout */
 .split-container {
     display: flex;
-    gap: 2rem;
-    padding: 2rem;
+    gap: 1.5rem;
+    padding: 1.5rem;
     max-width: 1800px;
     margin: 0 auto;
     min-height: calc(100vh - 4rem);
@@ -345,7 +343,7 @@
 /* Job Description Section */
 .job-description-section {
     background-color: white;
-    padding: 1.5rem;
+    padding: 1.0rem;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }

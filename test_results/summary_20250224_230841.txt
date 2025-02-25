@@ -1,0 +1,42 @@
+=== Job Scraper Test Results ===
+Timestamp: 2025-02-24 23:08:41
+
+Test: GitHub Careers Job
+URL: https://www.github.careers/careers-home/jobs/3345?lang=en-us
+Success: False
+Description Length: 0
+Markers Found: 
+Execution Time: 0.00 seconds
+Error: _scrape_github() takes 1 positional argument but 2 were given
+
+==============================
+
+Test: LinkedIn Job
+URL: https://www.linkedin.com/jobs/collections/recommended/?currentJobId=4160350287&origin=JYMBII_IN_APP_NOTIFICATION&originToLandingJobPostings=4158636844%2C4163610527
+Success: False
+Description Length: 0
+Markers Found: 
+Execution Time: 0.00 seconds
+Error: Failed to extract a sufficient job description from the page.
+
+==============================
+
+Test: Ledcor Job
+URL: https://jobs.ledcor.com/jobs/15692451-system-solutions-developer
+Success: True
+Description Length: 3660
+Markers Found: qualifications, experience, skills, responsibilities, requirements
+Execution Time: 1.17 seconds
+
+==============================
+
+Test: GitHub Careers Job
+URL: https://www.github.careers/careers-home/jobs/3345?lang=en-us
+Success: False
+Description Length: 0
+Markers Found: 
+Execution Time: 0.00 seconds
+Error: _scrape_github() takes 1 positional argument but 2 were given
+
+==============================
+

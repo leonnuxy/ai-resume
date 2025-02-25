@@ -59,7 +59,7 @@
                 <h3>Optimize for Job</h3>
                 <form id="optimizeForm" action="{{ url_for('optimize_resume') }}" method="post">
                     <textarea name="job_description" rows="10" required placeholder="Paste job description here..."></textarea>
-                    <div class="input-group">
+                    <div class="input-group hidden">
                         <input type="url" name="job_url" class="url-input" placeholder="Or paste job posting URL here">
                         <button type="button" id="fetchJob" class="fetch-btn">Fetch Description</button>
                     </div>

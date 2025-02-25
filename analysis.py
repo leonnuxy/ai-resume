@@ -1,10 +1,34 @@
-import json
-import ollama
-from typing import Dict, List, Tuple
+"""
+Module for analyzing and optimizing resumes using AI.
+Provides functionality for document structure analysis and job-specific optimization.
+"""
 
-def analyze_document_structure(text: str) -> dict:
-    """Use Ollama to analyze document structure and formatting"""
+import json
+import logging
+import logging.config
+from typing import Dict, List, Optional
+import ollama
+from pathlib import Path
+
+# Configure logging
+logging.config.fileConfig('logging_config.ini')
+logger = logging.getLogger('analysis')
+
+# Constants
+LOG_SENDING_PROMPT = "Sending prompt to Ollama"
+
+def analyze_document_structure(text: str) -> Dict:
+    """
+    Analyze document structure and provide formatting recommendations.
+    
+    Args:
+        text: The document text to analyze
+        
+    Returns:
+        Dict containing section analysis and formatting recommendations
+    """
     try:
+        logger.info("Starting document structure analysis")
         prompt = f"""Analyze this document and provide formatting recommendations in JSON format.
         Focus on:
         1. Identifying section headers
@@ -30,37 +54,49 @@ def analyze_document_structure(text: str) -> dict:
         }}
         """
         
+        logger.debug(LOG_SENDING_PROMPT)
         response = ollama.chat(model='mistral', messages=[{
             'role': 'user',
             'content': prompt
         }])
         
-        # Extract JSON from response
         analysis = json.loads(response['message']['content'])
+        logger.info("Successfully completed document structure analysis")
         return analysis
     except Exception as e:
-        print(f"AI analysis error: {str(e)}")
+        logger.error(f"Error in document structure analysis: {str(e)}", exc_info=True)
         return {}
 
-def analyze_resume_sections(text: str) -> dict:
-    """Use Ollama to analyze and identify resume sections"""
-    try:
-        # Define the standard sections and their subsections
-        standard_sections = {
-            'Skills': [
-                '• Languages: Python, Java, C#, Go, Scala, C++, SQL, JavaScript(React) and HTML/CSS',
-                '• Cloud & DevOps: Kubernetes, Google Cloud, Azure Kubernetes Services, AWS, Jenkins, Docker, and Kafka',
-                '• Methodologies: Agile (Scrum), Continuous Integration/Continuous Deployment (CI/CD), Jira, Confluence, SDLC',
-                '• Web Development: React, Selenium, REST APIs, Spring Boot, .NET, Node.js, PostgreSQL, MongoDB, MySQL',
-                '• Data Analysis: Power BI, Tableau, Power Query, and advanced Microsoft Excel',
-                '• Data Infrastructure: ETM deliverables, Snowflake, Azure Data Services, and Operational Data Store (ODS)'
-            ],
-            'Experience': [],  # Will be populated by AI analysis
-            'Achievements': [],
-            'Education': [],
-            'Certifications': []
-        }
+def analyze_resume_sections(text: str) -> Dict:
+    """
+    Analyze and identify resume sections.
+    
+    Args:
+        text: The resume text to analyze
+        
+    Returns:
+        Dict containing identified sections and their content
+    """
+    logger.info("Starting resume section analysis")
+    
+    # Define standard sections
+    standard_sections = {
+        'Skills': [
+            '• Languages: Python, Java, C#, Go, Scala, C++, SQL, JavaScript(React) and HTML/CSS',
+            '• Cloud & DevOps: Kubernetes, Google Cloud, Azure Kubernetes Services, AWS, Jenkins, Docker, and Kafka',
+            '• Methodologies: Agile (Scrum), Continuous Integration/Continuous Deployment (CI/CD), Jira, Confluence, SDLC',
+            '• Web Development: React, Selenium, REST APIs, Spring Boot, .NET, Node.js, PostgreSQL, MongoDB, MySQL',
+            '• Data Analysis: Power BI, Tableau, Power Query, and advanced Microsoft Excel',
+            '• Data Infrastructure: ETM deliverables, Snowflake, Azure Data Services, and Operational Data Store (ODS)'
+        ],
+        'Experience': [],
+        'Achievements': [],
+        'Education': [],
+        'Certifications': []
+    }
 
+    try:
+        logger.debug("Preparing prompt for section analysis")
         prompt = f"""Analyze this resume text and categorize it into standard sections. You must identify and categorize content into these specific sections:
         1. Skills (with subsections for different skill types)
         2. Experience
@@ -87,29 +123,28 @@ def analyze_resume_sections(text: str) -> dict:
             ]
         }}"""
 
+        logger.debug(LOG_SENDING_PROMPT)
         response = ollama.chat(model='mistral', messages=[{
             'role': 'user',
             'content': prompt
         }])
         
         analysis = json.loads(response['message']['content'])
+        logger.debug("Successfully parsed Ollama response")
         
-        # Ensure all required sections exist with proper subsections
+        # Process sections
         sections = []
         for section_name, default_subsections in standard_sections.items():
-            # Find existing section if it exists
             existing_section = next(
                 (s for s in analysis.get('sections', []) if s['name'] == section_name),
                 None
             )
             
-            content = []
+            # Determine content based on section
             if section_name == 'Skills':
-                # Use predefined skill subsections
                 content = default_subsections
-            elif existing_section:
-                # Use AI-analyzed content for other sections
-                content = existing_section.get('content', [])
+            else:
+                content = existing_section.get('content', []) if existing_section else []
             
             sections.append({
                 'name': section_name,
@@ -122,7 +157,7 @@ def analyze_resume_sections(text: str) -> dict:
                 }
             })
         
-        return {
+        result = {
             'sections': sections,
             'structure_analysis': {
                 'section_order': list(standard_sections.keys()),
@@ -132,20 +167,25 @@ def analyze_resume_sections(text: str) -> dict:
                 }
             }
         }
+        
+        logger.info("Successfully completed resume section analysis")
+        return result
+        
     except Exception as e:
-        print(f"Error in resume section analysis: {str(e)}")
+        logger.error(f"Error in resume section analysis: {str(e)}", exc_info=True)
+        # Return default structure on error
         return {
             'sections': [
                 {
-                    'name': section_name,
+                    'name': name,
                     'type': 'main_section',
-                    'content': subsections if section_name == 'Skills' else [],
+                    'content': content if name == 'Skills' else [],
                     'formatting': {
                         'is_header': True,
                         'suggested_font_size': 12,
                         'suggested_spacing': 1.5
                     }
-                } for section_name, subsections in standard_sections.items()
+                } for name, content in standard_sections.items()
             ],
             'structure_analysis': {
                 'section_order': list(standard_sections.keys()),
@@ -156,15 +196,23 @@ def analyze_resume_sections(text: str) -> dict:
             }
         }
 
-def analyze_resume_for_job(resume_text: str, job_description: str) -> dict:
-    """Use Ollama to analyze and optimize resume for a specific job"""
-    try:
-        # First, ensure we have valid input
-        if not resume_text or not job_description:
-            print("Missing required input for analysis")
-            return {}
+def analyze_resume_for_job(resume_text: str, job_description: str) -> Dict:
+    """
+    Analyze and optimize resume for a specific job.
+    
+    Args:
+        resume_text: The resume text to analyze
+        job_description: The job description to compare against
+        
+    Returns:
+        Dict containing optimization suggestions
+    """
+    if not resume_text or not job_description:
+        logger.warning("Empty resume text or job description provided")
+        return {}
 
-        # Structure the prompt more clearly
+    try:
+        logger.info("Starting resume optimization analysis")
         prompt = f"""As a professional resume optimization expert, analyze this resume against the job description.
         
         RESUME:
@@ -206,39 +254,32 @@ def analyze_resume_for_job(resume_text: str, job_description: str) -> dict:
             ]
         }}"""
 
-        # Make the API call with error handling
-        try:
-            response = ollama.chat(model='mistral', messages=[{
-                'role': 'user',
-                'content': prompt
-            }])
-            
-            # Validate and parse the response
-            if not response or not response.get('message') or not response['message'].get('content'):
-                print("Invalid response from AI model")
-                return {}
-            
-            analysis = json.loads(response['message']['content'])
-            
-            # Validate the analysis structure
-            required_keys = ['missing_skills', 'improvement_suggestions', 
-                           'emphasis_suggestions', 'general_suggestions']
-            
-            if not all(key in analysis for key in required_keys):
-                print("Incomplete analysis structure")
-                return {key: [] for key in required_keys}
-            
-            return analysis
-            
-        except json.JSONDecodeError as e:
-            print(f"Error parsing AI response: {str(e)}")
+        logger.debug(LOG_SENDING_PROMPT)
+        response = ollama.chat(model='mistral', messages=[{
+            'role': 'user',
+            'content': prompt
+        }])
+        
+        if not response or not response.get('message') or not response['message'].get('content'):
+            logger.error("Empty or invalid response from Ollama")
             return {}
-        except Exception as e:
-            print(f"Error in AI analysis: {str(e)}")
-            return {}
+        
+        analysis = json.loads(response['message']['content'])
+        logger.debug("Successfully parsed Ollama response")
+        
+        # Validate analysis structure
+        required_keys = ['missing_skills', 'improvement_suggestions', 
+                        'emphasis_suggestions', 'general_suggestions']
+        
+        if not all(key in analysis for key in required_keys):
+            logger.warning("Missing required keys in analysis response")
+            return {key: [] for key in required_keys}
+        
+        logger.info("Successfully completed resume optimization analysis")
+        return analysis
             
     except Exception as e:
-        print(f"Error in resume analysis: {str(e)}")
+        logger.error(f"Error in resume optimization analysis: {str(e)}", exc_info=True)
         return {
             "missing_skills": [],
             "improvement_suggestions": [],
@@ -248,54 +289,69 @@ def analyze_resume_for_job(resume_text: str, job_description: str) -> dict:
             ]
         }
 
-def format_optimization_suggestions(analysis: dict) -> str:
-    """Format the AI analysis into HTML"""
+def format_optimization_suggestions(analysis: Dict) -> str:
+    """
+    Format optimization suggestions into HTML.
+    
+    Args:
+        analysis: Dict containing optimization suggestions
+        
+    Returns:
+        Formatted HTML string containing the suggestions
+    """
     if not analysis:
-        return "<p>Unable to generate optimization suggestions. Please try again.</p>"
+        return """
+        <div class="optimization-results">
+            <p>No specific suggestions found. Please try again with a more detailed job description.</p>
+        </div>
+        """
     
-    html = []
+    def format_section(title: str, items: List, formatter_func) -> str:
+        """Format a section of suggestions."""
+        if not items:
+            return ""
+            
+        formatted_items = [formatter_func(item) for item in items]
+        return f"""
+        <div class="suggestion-section">
+            <h4>{title}</h4>
+            <ul>
+                {''.join(formatted_items)}
+            </ul>
+        </div>
+        """
     
-    # Helper function to format a section
-    def format_section(title: str, items: list, formatter) -> None:
-        if items:
-            html.append(f"<h4>{title}</h4><ul>")
-            for item in items:
-                html.append(formatter(item))
-            html.append("</ul>")
+    # Format sections
+    sections = {
+        "Missing Key Skills": (
+            analysis.get('missing_skills', []),
+            lambda x: f"<li><strong>{x['skill']}</strong>: {x['suggestion']}</li>"
+        ),
+        "Suggested Improvements": (
+            analysis.get('improvement_suggestions', []),
+            lambda x: f"<li><strong>Current:</strong> {x['current']}<br>"
+                     f"<strong>Suggested:</strong> {x['suggested']}<br>"
+                     f"<em>Why:</em> {x['reason']}</li>"
+        ),
+        "Experiences to Emphasize": (
+            analysis.get('emphasis_suggestions', []),
+            lambda x: f"<li><strong>{x['experience']}</strong><br>"
+                     f"<em>Why relevant:</em> {x['why_relevant']}<br>"
+                     f"<em>How to emphasize:</em> {x['how_to_emphasize']}</li>"
+        ),
+        "General Suggestions": (
+            analysis.get('general_suggestions', []),
+            lambda x: f"<li>{x}</li>"
+        )
+    }
     
-    # Missing Skills
-    format_section(
-        "Missing Key Skills",
-        analysis.get('missing_skills', []),
-        lambda x: f"<li><strong>{x['skill']}</strong>: {x['suggestion']}</li>"
-    )
+    formatted_sections = [
+        format_section(title, items, formatter)
+        for title, (items, formatter) in sections.items()
+    ]
     
-    # Improvement Suggestions
-    format_section(
-        "Suggested Improvements",
-        analysis.get('improvement_suggestions', []),
-        lambda x: f"<li><div class='highlight'>{x['current']}</div> could be improved to: "
-                 f"<div class='highlight'>{x['suggested']}</div>"
-                 f"<em>Why: {x['reason']}</em></li>"
-    )
-    
-    # Emphasis Suggestions
-    format_section(
-        "Experiences to Emphasize",
-        analysis.get('emphasis_suggestions', []),
-        lambda x: f"<li><strong>{x['experience']}</strong>"
-                 f"<br>Relevance: {x['why_relevant']}"
-                 f"<br>Suggestion: {x['how_to_emphasize']}</li>"
-    )
-    
-    # General Suggestions
-    format_section(
-        "General Suggestions",
-        analysis.get('general_suggestions', []),
-        lambda x: f"<li>{x}</li>"
-    )
-    
-    if not html:
-        return "<p>No specific suggestions found. Your resume might already be well-matched for this position.</p>"
-    
-    return "\n".join(html) 
+    return f"""
+    <div class="optimization-results">
+        {''.join(formatted_sections)}
+    </div>
+    """ 

@@ -1,45 +1,61 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
-from werkzeug.utils import secure_filename
 from datetime import timedelta
+from flask import (
+    Flask, 
+    render_template, 
+    request, 
+    redirect, 
+    url_for, 
+    flash, 
+    session, 
+    jsonify
+)
+from werkzeug.utils import secure_filename
 from flask_session import Session
-import io
 
 # Import from our modules
 from resume_parser import parse_pdf, parse_docx, parse_txt
 from analysis import analyze_resume_for_job, format_optimization_suggestions
 from job_scraper import extract_job_description, ScrapingError
 
+# Initialize Flask app
 app = Flask(__name__)
-app.secret_key = os.urandom(24)  # Generate a strong random key
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)  # Increase session lifetime
-app.config['SESSION_TYPE'] = 'filesystem'  # Use filesystem to store session data
-Session(app)  # Initialize session
 
-# Configure upload folder
-UPLOAD_FOLDER = 'uploads'
+# App configuration
+app.secret_key = os.urandom(24)
+app.config.update(
+    PERMANENT_SESSION_LIFETIME=timedelta(minutes=30),
+    SESSION_TYPE='filesystem',
+    UPLOAD_FOLDER='uploads',
+    MAX_CONTENT_LENGTH=16 * 1024 * 1024  # 16MB max file size
+)
+
+# Initialize session
+Session(app)
+
+# Constants
 ALLOWED_EXTENSIONS = {'pdf', 'docx', 'txt'}
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
-# Create uploads directory if it doesn't exist
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+# Create uploads directory
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-def allowed_file(filename):
+def allowed_file(filename: str) -> bool:
+    """Check if the file extension is allowed."""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.before_request
 def make_session_permanent():
+    """Make the session permanent before each request."""
     session.permanent = True
 
 @app.route('/')
 def index():
+    """Render the main upload page."""
     return render_template('index.html')
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    session.permanent = True
-    
+    """Handle file upload and parsing."""
     if 'resume' not in request.files:
         flash('No file selected')
         return redirect(url_for('index'))
@@ -49,51 +65,49 @@ def upload_file():
         flash('No file selected')
         return redirect(url_for('index'))
     
-    if file and allowed_file(file.filename):
+    if not file or not allowed_file(file.filename):
+        flash('Invalid file type. Please upload a PDF, DOCX, or TXT file.')
+        return redirect(url_for('index'))
+    
+    try:
         filename = secure_filename(file.filename)
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(file_path)
         
-        try:
-            file_ext = filename.rsplit('.', 1)[1].lower()
-            formatting = None
-            
-            if file_ext == 'pdf':
-                text, formatting = parse_pdf(file_path)
-            elif file_ext == 'docx':
-                text = parse_docx(file_path)
-            elif file_ext == 'txt':
-                text = parse_txt(file_path)
-            
-            # Anonymize personal information in text
-            modified_text = text
-            
-            # Clear and update session data
-            session.clear()
-            session['modified_text'] = modified_text
-            session['original_file_type'] = file_ext
-            session['original_filename'] = filename
-            if formatting:
-                session['formatting'] = formatting
-            
-            os.remove(file_path)
-            
-            return render_template('result.html', content=modified_text)
-            
-        except Exception as e:
-            print(f"Error processing file: {str(e)}")
-            flash('Error processing file')
-            return redirect(url_for('index'))
-    else:
-        flash('Invalid file type. Please upload a PDF, DOCX, or TXT file.')
+        # Parse file based on extension
+        file_ext = filename.rsplit('.', 1)[1].lower()
+        formatting = None
+        
+        if file_ext == 'pdf':
+            text, formatting = parse_pdf(file_path)
+        elif file_ext == 'docx':
+            text = parse_docx(file_path)
+        elif file_ext == 'txt':
+            text = parse_txt(file_path)
+        
+        # Update session data
+        session.clear()
+        session.update({
+            'modified_text': text,
+            'original_file_type': file_ext,
+            'original_filename': filename
+        })
+        
+        if formatting:
+            session['formatting'] = formatting
+        
+        # Clean up uploaded file
+        os.remove(file_path)
+        
+        return render_template('result.html', content=text)
+        
+    except Exception:
+        flash('Error processing file')
         return redirect(url_for('index'))
-
-@app.route('/check_session')
-def check_session():
-    return '', 204
 
 @app.route('/optimize', methods=['POST'])
 def optimize_resume():
+    """Analyze and optimize resume against job description."""
     try:
         if 'modified_text' not in session:
             flash('No resume available for optimization')
@@ -104,31 +118,29 @@ def optimize_resume():
             flash('Please provide a job description')
             return redirect(url_for('result'))
         
-        # Get the resume text from session
+        # Get resume text and analyze
         resume_text = session['modified_text']
-        
-        # Analyze resume against job description
         analysis = analyze_resume_for_job(resume_text, job_description)
-        
-        # Format the suggestions
         optimized_content = format_optimization_suggestions(analysis)
         
-        # Store the job description and analysis in session
-        session['job_description'] = job_description
-        session['optimization_analysis'] = analysis
+        # Update session
+        session.update({
+            'job_description': job_description,
+            'optimization_analysis': analysis
+        })
         
         return render_template('result.html',
                             content=resume_text,
                             optimized_content=optimized_content,
                             session_data=dict(session))
                             
-    except Exception as e:
-        print(f"Error in optimization: {str(e)}")
+    except Exception:
         flash('Error during resume optimization')
         return redirect(url_for('index'))
 
 @app.route('/fetch_job_description', methods=['POST'])
 def fetch_job_description():
+    """Fetch job description from URL."""
     try:
         url = request.json.get('url')
         if not url:
@@ -139,7 +151,7 @@ def fetch_job_description():
         
     except ScrapingError as e:
         return jsonify({'error': str(e)}), 400
-    except Exception as e:
+    except Exception:
         return jsonify({'error': 'Failed to fetch job description. Please try again.'}), 500
 
 if __name__ == '__main__':
