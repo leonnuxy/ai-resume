@@ -8,7 +8,8 @@ from flask import (
     url_for, 
     flash, 
     session, 
-    jsonify
+    jsonify,
+    url_for
 )
 from werkzeug.utils import secure_filename
 from flask_session import Session
@@ -112,21 +113,22 @@ def upload_file():
 @app.route('/optimize', methods=['POST'])
 def optimize_resume():
     """Analyze and optimize resume against job description."""
+    print("Entering /optimize route!")  # ADD THIS LINE - logging statement
     try:
-        # if 'modified_text' not in session:  # Comment out session check
+        # if 'modified_text' not in session:  # Session check commented out for now
         #     flash('No resume available for optimization')
         #     return redirect(url_for('index'))
 
         job_description = request.form.get('job_description')
         if not job_description:
-            # flash('Please provide a job description') # Comment out flash and redirect
-            return "Error: Job description is missing.", 400, {'Content-Type': 'text/plain'} # Return error message instead of redirect
+            # flash('Please provide a job description') # Commented out flash and redirect
+            return "Error: Job description is missing.", 400, {'Content-Type': 'text/plain'} # Return error message
 
         # Get resume text and analyze
-        resume_text = session['modified_text'] # Keep this line for now, even if session is not set
+        resume_text = session['modified_text'] # Keep session access for now
 
-        analysis = analyze_resume_for_job(resume_text, job_description) # Keep analysis call
-        optimized_content = format_optimization_suggestions(analysis) # Keep formatting
+        analysis = analyze_resume_for_job(resume_text, job_description)
+        optimized_content = format_optimization_suggestions(analysis)
 
         # Update session
         session.update({
@@ -134,12 +136,13 @@ def optimize_resume():
             'optimization_analysis': analysis
         })
 
-        return render_template('result.html', # Keep rendering
+        return render_template('result.html',
                             content=resume_text,
                             optimized_content=optimized_content,
                             session_data=dict(session))
 
-    except Exception:
+    except Exception as e: # Capture exception for logging
+        print(f"Error in /optimize route: {e}") # Log any exceptions
         flash('Error during resume optimization')
         return redirect(url_for('index'))
 
