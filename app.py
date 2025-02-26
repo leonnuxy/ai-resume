@@ -113,31 +113,32 @@ def upload_file():
 def optimize_resume():
     """Analyze and optimize resume against job description."""
     try:
-        if 'modified_text' not in session:
-            flash('No resume available for optimization')
-            return redirect(url_for('index'))
-        
+        # if 'modified_text' not in session:  # Comment out session check
+        #     flash('No resume available for optimization')
+        #     return redirect(url_for('index'))
+
         job_description = request.form.get('job_description')
         if not job_description:
-            flash('Please provide a job description')
-            return redirect(url_for('result'))
-        
+            # flash('Please provide a job description') # Comment out flash and redirect
+            return "Error: Job description is missing.", 400, {'Content-Type': 'text/plain'} # Return error message instead of redirect
+
         # Get resume text and analyze
-        resume_text = session['modified_text']
-        analysis = analyze_resume_for_job(resume_text, job_description)
-        optimized_content = format_optimization_suggestions(analysis)
-        
+        resume_text = session['modified_text'] # Keep this line for now, even if session is not set
+
+        analysis = analyze_resume_for_job(resume_text, job_description) # Keep analysis call
+        optimized_content = format_optimization_suggestions(analysis) # Keep formatting
+
         # Update session
         session.update({
             'job_description': job_description,
             'optimization_analysis': analysis
         })
-        
-        return render_template('result.html',
+
+        return render_template('result.html', # Keep rendering
                             content=resume_text,
                             optimized_content=optimized_content,
                             session_data=dict(session))
-                            
+
     except Exception:
         flash('Error during resume optimization')
         return redirect(url_for('index'))

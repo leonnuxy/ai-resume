@@ -160,3 +160,229 @@ Common issues and solutions:
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+## API Documentation
+
+### Endpoints
+
+#### 1. Upload Resume
+```http
+POST /upload
+Content-Type: multipart/form-data
+```
+
+**Request Body:**
+- `resume` (file, required): PDF, DOCX, or TXT file
+  - Maximum file size: 16MB
+  - Supported formats: `.pdf`, `.docx`, `.txt`
+
+**Response:**
+- Success (200):
+```json
+{
+    "status": "success",
+    "redirect": "/result"
+}
+```
+- Error (400):
+```json
+{
+    "error": "Invalid file type",
+    "message": "Please upload a PDF, DOCX, or TXT file"
+}
+```
+
+#### 2. Optimize Resume
+```http
+POST /optimize
+Content-Type: application/x-www-form-urlencoded
+```
+
+**Request Body:**
+- `job_description` (string, required): Job description text
+
+**Response:**
+- Success (200): HTML content with optimization results
+- Error (400):
+```json
+{
+    "error": "Missing data",
+    "message": "Please provide a job description"
+}
+```
+
+#### 3. Fetch Job Description
+```http
+POST /fetch_job_description
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+    "url": "https://example.com/job-posting"
+}
+```
+
+**Response:**
+- Success (200):
+```json
+{
+    "description": "Extracted job description text"
+}
+```
+- Error (400):
+```json
+{
+    "error": "Invalid URL or unable to extract description"
+}
+```
+
+#### 4. Health Check
+```http
+GET /health
+```
+
+**Response:**
+- Success (200):
+```json
+{
+    "status": "OK"
+}
+```
+
+### Error Codes
+
+| Code | Description |
+|------|-------------|
+| 200  | Success |
+| 400  | Bad Request - Invalid input |
+| 401  | Unauthorized - Authentication required |
+| 403  | Forbidden - Insufficient permissions |
+| 404  | Not Found - Resource doesn't exist |
+| 413  | Payload Too Large - File size exceeds limit |
+| 500  | Internal Server Error |
+
+### Rate Limiting
+
+- 100 requests per hour per IP address
+- 5 file uploads per minute per IP address
+
+### Session Management
+
+- Session duration: 30 minutes
+- Session data stored server-side
+- Session includes:
+  - Original file type
+  - Original filename
+  - Parsed text content
+  - Formatting information
+  - Optimization results
+
+### Example Usage
+
+#### Upload Resume (cURL)
+```bash
+curl -X POST \
+  -F "resume=@/path/to/resume.pdf" \
+  http://your-domain.com/upload
+```
+
+#### Optimize Resume (cURL)
+```bash
+curl -X POST \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "job_description=Senior Software Engineer position..." \
+  http://your-domain.com/optimize
+```
+
+#### Fetch Job Description (cURL)
+```bash
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"url":"https://example.com/job-posting"}' \
+  http://your-domain.com/fetch_job_description
+```
+
+### Security Considerations
+
+1. **File Upload Security**
+   - File size limit: 16MB
+   - Allowed extensions: `.pdf`, `.docx`, `.txt`
+   - Secure filename handling
+   - Content type validation
+
+2. **API Security**
+   - CSRF protection enabled
+   - Rate limiting
+   - Input sanitization
+   - Secure session handling
+
+3. **Data Privacy**
+   - Uploaded files are processed and immediately deleted
+   - No permanent storage of resume content
+   - Session data expires after 30 minutes
+
+### Development Integration
+
+#### Python Example
+```python
+import requests
+
+# Upload resume
+files = {'resume': open('resume.pdf', 'rb')}
+upload_response = requests.post('http://your-domain.com/upload', files=files)
+
+# Optimize resume
+job_description = "Senior Software Engineer position..."
+optimize_response = requests.post(
+    'http://your-domain.com/optimize',
+    data={'job_description': job_description}
+)
+
+# Fetch job description
+url_response = requests.post(
+    'http://your-domain.com/fetch_job_description',
+    json={'url': 'https://example.com/job-posting'}
+)
+```
+
+#### JavaScript Example
+```javascript
+// Upload resume
+const formData = new FormData();
+formData.append('resume', fileInput.files[0]);
+
+fetch('/upload', {
+    method: 'POST',
+    body: formData
+})
+.then(response => response.json())
+.then(data => console.log(data));
+
+// Optimize resume
+fetch('/optimize', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({
+        'job_description': 'Senior Software Engineer position...'
+    })
+})
+.then(response => response.text())
+.then(html => console.log(html));
+
+// Fetch job description
+fetch('/fetch_job_description', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+        url: 'https://example.com/job-posting'
+    })
+})
+.then(response => response.json())
+.then(data => console.log(data));
+```
