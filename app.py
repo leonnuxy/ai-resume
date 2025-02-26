@@ -53,6 +53,10 @@ def index():
     """Render the main upload page."""
     return render_template('index.html')
 
+@app.route('/health')  # <---  Check this route definition
+def health_check():
+    return jsonify({"status": "OK"})
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     """Handle file upload and parsing."""
