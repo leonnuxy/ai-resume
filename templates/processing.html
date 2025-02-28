@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Processing Resume</title>
+    <script>
+        function checkTaskStatus(taskId) {
+            fetch(`/status/${taskId}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    if (data.state === 'SUCCESS') {
+                        // Redirect to the result page or display the results
+                        // You'll need to create a route to display the results
+                        // For now, let's just show an alert
+                         const formattedSuggestions = data.result.suggestions.map(suggestion => {
+                            return `<li><strong>${suggestion.title}</strong>: ${suggestion.details}</li>`;
+                        }).join('');
+
+                        // Display the result in a div
+                        const resultDiv = document.getElementById('result');
+                        resultDiv.innerHTML = `
+                            <h2>Analysis Result:</h2>
+                            <p><strong>Missing Keywords:</strong> ${data.result.analysis.missing_keywords.join(', ')}</p>
+                            <p><strong>Action Verbs:</strong> ${data.result.analysis.action_verbs.join(', ')}</p>
+                            <p><strong>Metrics:</strong> ${data.result.analysis.metrics.join(', ')}</p>
+                            <p><strong>Soft Skills:</strong> ${data.result.analysis.soft_skills.join(', ')}</p>
+                            <p><strong>Hard Skills:</strong> ${data.result.analysis.hard_skills.join(', ')}</p>
+                            <p><strong>Sentences Complexity Score:</strong> ${data.result.analysis.sentences_complexity_score}</p>
+                            <p><strong>Overall Readability Score:</strong> ${data.result.analysis.overall_readability_score}</p>
+                            <p><strong>Suggestions:</strong></p>
+                                <ul>${formattedSuggestions}</ul>
+                        `;
+                    } else if (data.state === 'FAILURE') {
+                        alert('An error occurred: ' + data.status);
+                    } else {
+                        // Task is still running, check again in a few seconds
+                        setTimeout(() => checkTaskStatus(taskId), 2000);
+                    }
+                });
+        }
+
+        window.onload = () => {
+            const taskId = "{{ task_id }}";  // Get the task ID from the template
+            checkTaskStatus(taskId);
+        };
+    </script>
+</head>
+<body>
+    <h1>Processing your resume...</h1>
+    <p>This may take a few minutes. Please wait.</p>
+    <div id="result"></div>
+</body>
+</html>
