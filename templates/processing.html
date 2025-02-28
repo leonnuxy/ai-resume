@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Processing Resume</title>
     <script>
@@ -12,7 +13,7 @@
                         // Redirect to the result page or display the results
                         // You'll need to create a route to display the results
                         // For now, let's just show an alert
-                         const formattedSuggestions = data.result.suggestions.map(suggestion => {
+                        const formattedSuggestions = data.result.suggestions.map(suggestion => {
                             return `<li><strong>${suggestion.title}</strong>: ${suggestion.details}</li>`;
                         }).join('');
 
@@ -45,9 +46,11 @@
         };
     </script>
 </head>
+
 <body>
     <h1>Processing your resume...</h1>
     <p>This may take a few minutes. Please wait.</p>
     <div id="result"></div>
 </body>
+
 </html>
