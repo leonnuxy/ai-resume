@@ -1,36 +1,35 @@
 import os
 from datetime import timedelta
 from flask import (
-    Flask, 
-    render_template, 
-    request, 
-    redirect, 
-    url_for, 
-    flash, 
-    session, 
+    Flask,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    flash,
+    session,
     jsonify,
-    url_for
 )
 from werkzeug.utils import secure_filename
 from flask_session import Session
-
 # Import from our modules
 from resume_parser import parse_pdf, parse_docx, parse_txt
-from analysis import analyze_resume_for_job, format_optimization_suggestions
 from job_scraper import extract_job_description, ScrapingError
+from tasks import analyze_resume_task  # Import the Celery task
+from dotenv import load_dotenv # Import load_dotenv
 
 # Initialize Flask app
 app = Flask(__name__)
 
 # App configuration
-app.secret_key = os.urandom(24)
+load_dotenv() #load the env variables.
+app.secret_key = os.environ.get('SECRET_KEY', os.urandom(24)) # Use os.environ.get()
 app.config.update(
     PERMANENT_SESSION_LIFETIME=timedelta(minutes=30),
     SESSION_TYPE='filesystem',
     UPLOAD_FOLDER='uploads',
     MAX_CONTENT_LENGTH=16 * 1024 * 1024  # 16MB max file size
 )
-
 # Initialize session
 Session(app)
 
@@ -54,7 +53,7 @@ def index():
     """Render the main upload page."""
     return render_template('index.html')
 
-@app.route('/health')  # <---  Check this route definition
+@app.route('/health')
 def health_check():
     return jsonify({"status": "OK"})
 
@@ -64,32 +63,32 @@ def upload_file():
     if 'resume' not in request.files:
         flash('No file selected')
         return redirect(url_for('index'))
-    
+
     file = request.files['resume']
     if file.filename == '':
         flash('No file selected')
         return redirect(url_for('index'))
-    
+
     if not file or not allowed_file(file.filename):
         flash('Invalid file type. Please upload a PDF, DOCX, or TXT file.')
         return redirect(url_for('index'))
-    
+
     try:
         filename = secure_filename(file.filename)
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(file_path)
-        
+
         # Parse file based on extension
         file_ext = filename.rsplit('.', 1)[1].lower()
         formatting = None
-        
+
         if file_ext == 'pdf':
             text, formatting = parse_pdf(file_path)
         elif file_ext == 'docx':
             text = parse_docx(file_path)
         elif file_ext == 'txt':
             text = parse_txt(file_path)
-        
+
         # Update session data
         session.clear()
         session.update({
@@ -97,43 +96,36 @@ def upload_file():
             'original_file_type': file_ext,
             'original_filename': filename
         })
-        
+
         if formatting:
             session['formatting'] = formatting
-        
+
         # Clean up uploaded file
         os.remove(file_path)
-        
+
         return render_template('result.html', content=text)
-        
+
     except Exception:
         flash('Error processing file')
         return redirect(url_for('index'))
-
 @app.route('/optimize', methods=['POST'])
 def optimize_resume():
     """Analyze and optimize resume against job description."""
     try:
         job_description = request.form.get('job_description')
         if not job_description:
-            # Return JSON response for API requests
-            return jsonify({
-                'error': 'Missing data',
-                'message': 'Please provide a job description'
-            }), 400
+            return jsonify({'error': 'Missing data', 'message': 'Please provide a job description'}), 400
 
-        # Check if this is an API request (no session or Accept header indicates JSON)
-        is_api_request = ('modified_text' not in session or 
+        # Check if this is an API request
+        is_api_request = ('modified_text' not in session or
                          request.headers.get('Accept') == 'application/json')
-
         if is_api_request:
-            # For API requests, use a sample resume or return error
             resume_text = """
             SKILLS
             • Languages: Python, Java, JavaScript
             • Cloud & DevOps: AWS, Docker, Kubernetes
             • Web Development: React, Node.js, REST APIs
-            
+
             EXPERIENCE
             Software Engineer | Tech Corp
             • Led development of cloud-based applications
@@ -142,22 +134,14 @@ def optimize_resume():
         else:
             resume_text = session.get('modified_text')
 
-        analysis = analyze_resume_for_job(resume_text, job_description)
-        
-        # Return different responses based on request type
+        # Start the asynchronous task
+        task = analyze_resume_task.delay(resume_text, job_description)
+
+        # Return a response immediately, including the task ID
         if is_api_request:
-            return jsonify({
-                'status': 'success',
-                'analysis': analysis,
-                'suggestions': format_optimization_suggestions(analysis)
-            })
+          return jsonify({'status': 'processing', 'task_id': task.id}), 202
         else:
-            # Web interface response
-            optimized_content = format_optimization_suggestions(analysis)
-            return render_template('result.html',
-                                content=resume_text,
-                                optimized_content=optimized_content,
-                                session_data=dict(session))
+          return render_template('processing.html', task_id=task.id)
 
     except Exception as e:
         error_response = {
@@ -173,14 +157,43 @@ def fetch_job_description():
         url = request.json.get('url')
         if not url:
             return jsonify({'error': 'No URL provided'}), 400
-            
+
         description = extract_job_description(url)
         return jsonify({'description': description})
-        
+
     except ScrapingError as e:
         return jsonify({'error': str(e)}), 400
     except Exception:
         return jsonify({'error': 'Failed to fetch job description. Please try again.'}), 500
+@app.route('/status/<task_id>')
+def task_status(task_id):
+    task = analyze_resume_task.AsyncResult(task_id)
+    if task.state == 'PENDING':
+        # Job has not started yet
+        response = {
+            'state': task.state,
+            'current': 0,
+            'total': 1,
+            'status': 'Pending...'
+        }
+    elif task.state != 'FAILURE':
+        response = {
+            'state': task.state,
+            'current': task.info.get('current', 0) if task.info else 0,
+            'total': task.info.get('total', 1) if task.info else 1,
+            'status': task.info.get('status', '') if task.info else ''
+        }
+        if 'result' in task.info:
+            response['result'] = task.info['result']
+    else:
+        # Something went wrong in the background job
+        response = {
+            'state': task.state,
+            'current': 1,
+            'total': 1,
+            'status': str(task.info),  # this is the exception raised
+        }
+    return jsonify(response)
 
 if __name__ == '__main__':
-    app.run(debug=False) 
+    app.run(debug=False)
