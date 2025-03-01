@@ -1,4 +1,4 @@
-#!/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/bin/python
+#!/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/bin/python3
 """Extract pdf structure in XML format"""
 import logging
 import os.path

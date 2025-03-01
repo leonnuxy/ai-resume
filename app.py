@@ -12,26 +12,35 @@ from flask import (
 )
 from werkzeug.utils import secure_filename
 from flask_session import Session
-# Import from our modules
 from resume_parser import parse_pdf, parse_docx, parse_txt
 from job_scraper import extract_job_description, ScrapingError
-from tasks import analyze_resume_task  # Import the Celery task
-from dotenv import load_dotenv # Import load_dotenv
+from tasks import analyze_resume_task  # Or from tasks import ...
+from dotenv import load_dotenv
+from celery_config import make_celery
+
 
 # Initialize Flask app
 app = Flask(__name__)
 
 # App configuration
-load_dotenv() #load the env variables.
-app.secret_key = os.environ.get('SECRET_KEY', os.urandom(24)) # Use os.environ.get()
+load_dotenv()
+app.secret_key = os.environ.get('SECRET_KEY', os.urandom(24))
 app.config.update(
     PERMANENT_SESSION_LIFETIME=timedelta(minutes=30),
     SESSION_TYPE='filesystem',
     UPLOAD_FOLDER='uploads',
     MAX_CONTENT_LENGTH=16 * 1024 * 1024  # 16MB max file size
 )
+
 # Initialize session
 Session(app)
+
+# Flask app configuration
+app.config["CELERY_BROKER_URL"] = "redis://localhost:6379/0"
+app.config["CELERY_RESULT_BACKEND"] = "redis://localhost:6379/0"
+
+# Create Celery instance using the factory function
+celery = make_celery(app)
 
 # Constants
 ALLOWED_EXTENSIONS = {'pdf', 'docx', 'txt'}
@@ -165,6 +174,7 @@ def fetch_job_description():
         return jsonify({'error': str(e)}), 400
     except Exception:
         return jsonify({'error': 'Failed to fetch job description. Please try again.'}), 500
+
 @app.route('/status/<task_id>')
 def task_status(task_id):
     task = analyze_resume_task.AsyncResult(task_id)
@@ -183,8 +193,8 @@ def task_status(task_id):
             'total': task.info.get('total', 1) if task.info else 1,
             'status': task.info.get('status', '') if task.info else ''
         }
-        if 'result' in task.info:
-            response['result'] = task.info['result']
+        if task.state == 'SUCCESS': # Check for SUCCESS state
+            response['result'] = task.result  # Get the result directly
     else:
         # Something went wrong in the background job
         response = {

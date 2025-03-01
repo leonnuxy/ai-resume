@@ -1,7 +1,7 @@
 # tasks.py
 from celery import Celery
 from analysis import analyze_resume_for_job  # Import your analysis function
-import os
+import time
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -12,6 +12,7 @@ celery = Celery(__name__, broker='redis://localhost:6379/0', backend='redis://lo
 
 @celery.task(bind=True)
 def analyze_resume_task(self, resume_text, job_description):
+    time.sleep(5)
     """
     Asynchronous task to analyze a resume.
     """
