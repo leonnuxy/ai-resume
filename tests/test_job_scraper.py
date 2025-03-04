@@ -6,7 +6,7 @@ from typing import List, Dict
 
 # Add parent directory to path to import job_scraper
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from job_scraper import extract_job_description, ScrapingError
+from app.services.job_scraper import extract_job_description, ScrapingError
 
 class JobScraperTester:
     def __init__(self):

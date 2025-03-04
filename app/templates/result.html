@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimized Resume</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="flash-messages">
+        {% for message in messages %}
+        <div class="alert">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="error-alert {% if error %}visible{% else %}hidden{% endif %}">
+        {{ error }}
+    </div>
+
+    <div class="split-container">
+        <!-- Left side: Optimized Resume Preview -->
+        <div class="preview-pane">
+            <h2>Optimized Resume</h2>
+            <div class="preview-content optimized-resume">
+                {% if suggestions %}
+                {{ suggestions|safe }}
+                {% else %}
+                <div class="resume-content">
+                    {% if session_data and session_data.get('formatting') %}
+                    {% for section in session_data.formatting.section_analysis.sections %}
+                    <div class="resume-section {% if section.formatting.is_header %}section-header{% endif %}">
+                        <h3 class="section-title">{{ section.name }}</h3>
+                        <div class="section-content">
+                            {% if section.content %}
+                            {% for item in section.content %}
+                            {% if item.startswith('•') %}
+                            <div class="subsection-item">{{ item }}</div>
+                            {% else %}
+                            <p>{{ item }}</p>
+                            {% endif %}
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <pre>{{ content }}</pre>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Right side: Optimization Controls -->
+        <div class="controls-pane">
+            <!-- result.html -->
+            <div class="job-description-section">
+                <h3>Optimize for Job</h3>
+                <form id="optimizeForm" action="{{ url_for('optimize_resume') }}" method="post">
+                    <!-- Visible job description textarea -->
+                    <div class="input-group">
+                        <label for="job_description">Job Description:</label>
+                        <textarea name="job_description" id="job_description" rows="6" required
+                            placeholder="Paste job description here..."></textarea>
+                    </div>
+
+                    <!-- Hidden URL input group -->
+                    <div class="input-group hidden">
+                        <label for="job_url">Or enter job posting URL:</label>
+                        <div class="url-input-group">
+                            <input type="url" name="job_url" id="job_url" class="url-input"
+                                placeholder="https://example.com/job-posting">
+                            <button type="button" id="fetchJob" class="fetch-btn">
+                                Fetch Description
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="optimize-btn">Analyze & Optimize</button>
+                    <div class="progress-container hidden" id="progressContainer">
+                        <div class="progress-bar" id="aiProgress">
+                            <div class="progress-fill"></div>
+                        </div>
+                        <div class="progress-status">
+                            <span id="progressStatus">Waiting for job description...</span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dynamic tooltip positioning
+        document.querySelectorAll('.change-highlight').forEach(highlight => {
+            highlight.addEventListener('mousemove', (e) => {
+                const tooltip = highlight.querySelector('.change-tooltip');
+                if (tooltip) {
+                    const rect = highlight.getBoundingClientRect();
+                    tooltip.style.left = `${e.clientX - rect.left + 15}px`;
+                    tooltip.style.top = `${e.clientY - rect.top + 15}px`;
+                }
+            });
+        });
+
+        // Toggle between textarea and URL input
+        document.querySelector('.toggle-input-type button').addEventListener('click', () => {
+            const textareaGroup = document.querySelector('#job_description').closest('.input-group');
+            const urlGroup = document.querySelector('.url-input-group').closest('.input-group');
+
+            textareaGroup.classList.toggle('hidden');
+            urlGroup.classList.toggle('hidden');
+        });
+
+        // Clear URL input when switching to textarea
+        document.querySelector('#job_description').addEventListener('focus', () => {
+            document.querySelector('#job_url').value = '';
+        });
+    </script>
+</body>
+
+</html>
