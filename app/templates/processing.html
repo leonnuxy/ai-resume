@@ -3,220 +3,38 @@
 
 <head>
     <title>Processing Resume</title>
-    <style>
-        /* Keep existing styles, add these new ones */
-        .live-preview {
-            border: 1px solid #eee;
-            padding: 1rem;
-            margin: 1rem 0;
-            background: #f8f9fa;
-        }
-
-        .progress-counter {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .progress-item {
-            flex: 1;
-            text-align: center;
-            padding: 0.5rem;
-            background: #fff;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .error-message {
-            color: #dc3545;
-            padding: 1rem;
-            border: 1px solid #dc3545;
-            border-radius: 4px;
-            margin: 1rem 0;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
-    <h1>Processing your resume...</h1>
-    <p>This may take a few minutes. Please wait.</p>
+    <div class="container">
+        <h1>Processing your resume...</h1>
+        <p>This may take a few minutes. Please wait.</p>
 
-    <div id="result">
-        <div class="loading-spinner"></div>
-        <div class="live-preview">
-            <h3>Live Analysis Progress</h3>
-            <div class="progress-counter">
-                <div class="progress-item" id="missing-skills-counter">
-                    Missing Skills: 0
+        <div id="result">
+            <div class="loading-spinner"></div>
+            <div class="live-preview">
+                <h3>Live Analysis Progress</h3>
+                <div class="progress-counter">
+                    <div class="progress-item" id="missing-skills-counter">
+                        Missing Skills: 0
+                    </div>
+                    <div class="progress-item" id="improvements-counter">
+                        Improvements: 0
+                    </div>
+                    <div class="progress-item" id="emphasis-counter">
+                        Emphasis Points: 0
+                    </div>
+                    <div class="progress-item" id="general-counter">
+                        Suggestions: 0
+                    </div>
                 </div>
-                <div class="progress-item" id="improvements-counter">
-                    Improvements: 0
-                </div>
-                <div class="progress-item" id="emphasis-counter">
-                    Emphasis Points: 0
-                </div>
-                <div class="progress-item" id="general-counter">
-                    Suggestions: 0
-                </div>
+                <div id="output"></div>
             </div>
-            <div id="output"></div>
         </div>
     </div>
 
-    <script>
-        // Initialize analysis storage
-        window.fullAnalysis = {
-            missing_skills: [],
-            improvement_suggestions: [],
-            emphasis_suggestions: [],
-            general_suggestions: []
-        };
-
-        function updateProgressCounters() {
-            document.getElementById('missing-skills-counter').textContent =
-                `Missing Skills: ${window.fullAnalysis.missing_skills.length}`;
-            document.getElementById('improvements-counter').textContent =
-                `Improvements: ${window.fullAnalysis.improvement_suggestions.length}`;
-            document.getElementById('emphasis-counter').textContent =
-                `Emphasis Points: ${window.fullAnalysis.emphasis_suggestions.length}`;
-            document.getElementById('general-counter').textContent =
-                `Suggestions: ${window.fullAnalysis.general_suggestions.length}`;
-        }
-
-        function handleStreamChunk(chunkData) {
-            const outputDiv = document.getElementById('output');
-
-            if (chunkData.partial) {
-                // Merge partial results
-                Object.keys(chunkData.partial).forEach(key => {
-                    if (Array.isArray(window.fullAnalysis[key])) {
-                        window.fullAnalysis[key] = [
-                            ...window.fullAnalysis[key],
-                            ...chunkData.partial[key]
-                        ];
-                    }
-                });
-                updateProgressCounters();
-                outputDiv.innerHTML = '<p>Receiving live analysis updates...</p>';
-            }
-            else if (chunkData.final) {
-                window.fullAnalysis = chunkData.final;
-                showFinalResults();
-            }
-            else if (chunkData.error) {
-                showError(chunkData.error);
-                return false; // Stop processing
-            }
-            return true;
-        }
-
-        function showFinalResults() {
-            const resultDiv = document.getElementById('result');
-            resultDiv.innerHTML = `
-                <h2>Analysis Complete</h2>
-                ${formatAnalysisSections(window.fullAnalysis)}
-            `;
-        }
-
-        function formatAnalysisSections(analysis) {
-            return `
-                <div class="suggestion-section">
-                    <h3>Missing Skills (${analysis.missing_skills.length})</h3>
-                    <ul>
-                        ${analysis.missing_skills.map(skill => `
-                            <li>
-                                <strong>${skill.skill}</strong>: ${skill.suggestion}
-                            </li>
-                        `).join('')}
-                    </ul>
-                </div>
-                
-                <div class="suggestion-section">
-                    <h3>Improvement Suggestions (${analysis.improvement_suggestions.length})</h3>
-                    <ul>
-                        ${analysis.improvement_suggestions.map(imp => `
-                            <li>
-                                <strong>Current:</strong> ${imp.current}<br>
-                                <strong>Suggested:</strong> ${imp.suggested}<br>
-                                <em>Reason:</em> ${imp.reason}
-                            </li>
-                        `).join('')}
-                    </ul>
-                </div>
-                
-                <div class="suggestion-section">
-                    <h3>Emphasis Recommendations (${analysis.emphasis_suggestions.length})</h3>
-                    <ul>
-                        ${analysis.emphasis_suggestions.map(emphasis => `
-                            <li>
-                                <strong>${emphasis.experience}</strong><br>
-                                <em>Why relevant:</em> ${emphasis.why_relevant}<br>
-                                <em>How to emphasize:</em> ${emphasis.how_to_emphasize}
-                            </li>
-                        `).join('')}
-                    </ul>
-                </div>
-                
-                <div class="suggestion-section">
-                    <h3>General Suggestions (${analysis.general_suggestions.length})</h3>
-                    <ul>
-                        ${analysis.general_suggestions.map(suggestion => `
-                            <li>${suggestion}</li>
-                        `).join('')}
-                    </ul>
-                </div>
-            `;
-        }
-
-        function showError(message) {
-            const resultDiv = document.getElementById('result');
-            resultDiv.innerHTML = `
-                <div class="error-message">
-                    <h3>Processing Error</h3>
-                    <p>${message}</p>
-                </div>
-            `;
-        }
-
-        function checkTaskStatus(taskId) {
-            fetch(`/status/${taskId}`)
-                .then(response => response.json())
-                .then(data => {
-                    console.debug('Status update:', data);
-
-                    if (data.state === 'SUCCESS') {
-                        showFinalResults();
-                    }
-                    else if (data.state === 'PROGRESS') {
-                        try {
-                            const chunkData = JSON.parse(data.chunk);
-                            if (!handleStreamChunk(chunkData)) return;
-                        } catch (e) {
-                            console.error('Chunk processing error:', e);
-                            showError('Invalid response format received');
-                            return;
-                        }
-                        setTimeout(() => checkTaskStatus(taskId), 500);
-                    }
-                    else if (data.state === 'FAILURE') {
-                        showError(data.status || 'Unknown error occurred');
-                    }
-                    else {
-                        setTimeout(() => checkTaskStatus(taskId), 1000);
-                    }
-                })
-                .catch(error => {
-                    console.error('Status check failed:', error);
-                    showError('Failed to communicate with server');
-                });
-        }
-
-        // Start processing when page loads
-        window.onload = () => {
-            const taskId = "{{ task_id }}";
-            checkTaskStatus(taskId);
-        };
-    </script>
+    <script src="{{ url_for('static', filename='js/processing.js') }}"></script>
 </body>
 
 </html>

@@ -59,37 +59,48 @@
 
         <!-- Right side: Optimization Controls -->
         <div class="controls-pane">
-            <!-- result.html -->
             <div class="job-description-section">
                 <h3>Optimize for Job</h3>
-                <form id="optimizeForm" action="{{ url_for('optimize_resume') }}" method="post">
-                    <!-- Visible job description textarea -->
+                <form id="optimizeForm" action="{{ url_for('analysis.optimize_resume') }}" method="post">
                     <div class="input-group">
-                        <label for="job_description">Job Description:</label>
-                        <textarea name="job_description" id="job_description" rows="6" required
-                            placeholder="Paste job description here..."></textarea>
+                        <label for="job_description">
+                            <span>Job Description</span>
+                            <span class="toggle-url" id="toggleUrl">(or use URL instead)</span>
+                        </label>
+                        <textarea 
+                            name="job_description" 
+                            id="job_description" 
+                            rows="6" 
+                            required
+                            placeholder="Paste the job description here. Include key requirements, responsibilities, and qualifications..."></textarea>
                     </div>
 
-                    <!-- Hidden URL input group -->
-                    <div class="input-group hidden">
-                        <label for="job_url">Or enter job posting URL:</label>
+                    <div class="input-group url-section hidden">
+                        <label for="job_url">Job Posting URL</label>
                         <div class="url-input-group">
-                            <input type="url" name="job_url" id="job_url" class="url-input"
+                            <input 
+                                type="url" 
+                                name="job_url" 
+                                id="job_url" 
+                                class="url-input"
                                 placeholder="https://example.com/job-posting">
                             <button type="button" id="fetchJob" class="fetch-btn">
-                                Fetch Description
+                                <span class="btn-text">Fetch</span>
+                                <span class="btn-icon">↓</span>
                             </button>
                         </div>
                     </div>
 
-                    <button type="submit" class="optimize-btn">Analyze & Optimize</button>
+                    <button type="submit" class="optimize-btn">
+                        <span class="btn-text">Analyze & Optimize Resume</span>
+                        <span class="btn-icon">→</span>
+                    </button>
+
                     <div class="progress-container hidden" id="progressContainer">
                         <div class="progress-bar" id="aiProgress">
                             <div class="progress-fill"></div>
                         </div>
-                        <div class="progress-status">
-                            <span id="progressStatus">Waiting for job description...</span>
-                        </div>
+                        <div class="progress-status">Analyzing resume...</div>
                     </div>
                 </form>
             </div>
@@ -108,21 +119,8 @@
                 }
             });
         });
-
-        // Toggle between textarea and URL input
-        document.querySelector('.toggle-input-type button').addEventListener('click', () => {
-            const textareaGroup = document.querySelector('#job_description').closest('.input-group');
-            const urlGroup = document.querySelector('.url-input-group').closest('.input-group');
-
-            textareaGroup.classList.toggle('hidden');
-            urlGroup.classList.toggle('hidden');
-        });
-
-        // Clear URL input when switching to textarea
-        document.querySelector('#job_description').addEventListener('focus', () => {
-            document.querySelector('#job_url').value = '';
-        });
     </script>
+    <script src="{{ url_for('static', filename='js/optimize.js') }}"></script>
 </body>
 
 </html>

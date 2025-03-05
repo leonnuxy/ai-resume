@@ -1,0 +1,24 @@
+2025-03-03 20:22:21 - app - ERROR - File upload error: cannot import name 'analyze_document_structure' from 'app.routes.analysis' (/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/app/routes/analysis.py)
+2025-03-03 20:22:31 - app - ERROR - File upload error: cannot import name 'analyze_document_structure' from 'app.routes.analysis' (/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/app/routes/analysis.py)
+2025-03-03 20:23:14 - app - ERROR - File upload error: cannot import name 'analyze_document_structure' from 'app.routes.analysis' (/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/app/routes/analysis.py)
+2025-03-03 21:07:47 - analysis - INFO - Starting resume optimization analysis
+2025-03-03 21:07:47 - analysis - INFO - Starting resume optimization analysis
+2025-03-03 21:07:47 - analysis - INFO - Starting resume optimization analysis
+2025-03-03 21:07:47 - analysis - INFO - Starting resume optimization analysis
+2025-03-03 21:09:40 - analysis - INFO - Successfully completed resume optimization analysis
+2025-03-03 21:09:48 - analysis - INFO - Successfully completed resume optimization analysis
+2025-03-03 21:09:48 - analysis - INFO - Successfully completed resume optimization analysis
+2025-03-03 21:09:50 - analysis - INFO - Successfully completed resume optimization analysis
+2025-03-03 21:21:32 - analysis - INFO - Starting resume optimization analysis
+2025-03-03 21:21:58 - analysis - INFO - Successfully completed resume optimization analysis
+2025-03-03 21:25:00 - analysis - INFO - Starting resume optimization analysis
+2025-03-03 21:25:25 - analysis - INFO - Successfully completed resume optimization analysis
+2025-03-03 21:30:15 - analysis - INFO - Testing Ollama connection
+2025-03-03 21:30:18 - analysis - INFO - Successfully connected to Ollama
+2025-03-03 21:32:44 - analysis - INFO - Starting resume optimization analysis
+2025-03-03 21:38:05 - app - ERROR - Optimization error: name 'flash' is not defined
+Traceback (most recent call last):
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/app/routes/analysis.py", line 20, in optimize_resume
+    flash('Please provide both resume text and job description')
+NameError: name 'flash' is not defined
+2025-03-03 22:21:16 - analysis - INFO - Starting resume optimization analysis

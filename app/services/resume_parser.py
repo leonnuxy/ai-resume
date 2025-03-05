@@ -2,6 +2,7 @@ import pdfplumber
 import PyPDF2
 from docx import Document
 from typing import Dict, List, Tuple
+from app.services.ai_analysis import analyze_document_structure, analyze_resume_sections
 
 def process_word(word: dict, base_size: float = None) -> dict:
     """Process a single word and return its formatting."""
@@ -33,8 +34,6 @@ def calculate_line_spacing(sections: list) -> dict:
 
 def extract_pdf_formatting(file_path: str) -> dict:
     """Extract formatting information from a PDF file."""
-    from app.routes.analysis import analyze_document_structure, analyze_resume_sections
-    
     formatting = {
         'sections': [],
         'default_font_size': 10,
@@ -101,4 +100,4 @@ def parse_docx(file_path: str) -> str:
 def parse_txt(file_path: str) -> str:
     """Parse TXT file and extract text"""
     with open(file_path, 'r', encoding='utf-8') as file:
-        return file.read() 
+        return file.read()
