@@ -13,8 +13,29 @@ An intelligent resume optimization tool that analyzes and enhances resumes based
 ## Prerequisites
 
 - Python 3.8+
+- Redis server
 - Ollama (local AI model server)
 - Virtual environment (recommended)
+- `redis-cli` tool
+- Celery
+
+For macOS users:
+```bash
+brew install redis ollama
+```
+
+For Linux users:
+```bash
+# Redis
+sudo apt-get install redis-server redis-tools
+
+# Ollama
+curl https://ollama.ai/install.sh | sh
+```
+
+For Windows users:
+- Redis: Download and install from https://github.com/microsoftarchive/redis/releases
+- Ollama: Follow instructions at https://ollama.ai/download/windows
 
 ## Installation
 
@@ -120,6 +141,61 @@ docker build -t ai-resume-optimizer .
 2. Run the container:
 ```bash
 docker run -d -p 8000:8000 ai-resume-optimizer
+```
+
+## Running the Application
+
+The application includes a comprehensive runner script that manages all dependencies and services. You can run the application in different modes:
+
+### Development Mode
+```bash
+python run.py --mode development
+```
+- Enables Flask debug mode
+- Uses a single Celery worker
+- Provides detailed logging
+
+### Production Mode
+```bash
+python run.py --mode production
+```
+- Optimized for production use
+- Runs multiple Celery workers (2 by default)
+- Enhanced security settings
+
+### Testing Mode
+```bash
+python run.py --mode testing
+```
+- Suitable for running tests
+- Minimal worker configuration
+- Test-specific settings
+
+The runner script automatically:
+- Checks and starts required dependencies (Redis, Ollama)
+- Manages Celery workers
+- Starts the Flask application
+- Provides a clean shutdown with Ctrl+C
+
+### Service Installation (Linux/SystemD)
+
+For production deployment on Linux systems with SystemD:
+
+1. Copy the service file to SystemD directory:
+```bash
+sudo cp ai-resume.service /etc/systemd/system/
+```
+
+2. Reload SystemD and enable the service:
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable ai-resume
+sudo systemctl start ai-resume
+```
+
+3. Check service status:
+```bash
+sudo systemctl status ai-resume
 ```
 
 ## Maintenance
@@ -385,4 +461,3 @@ fetch('/fetch_job_description', {
 })
 .then(response => response.json())
 .then(data => console.log(data));
-```

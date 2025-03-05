@@ -1,15 +1,19 @@
-Flask
+# Existing dependencies
+Flask>=2.0.0
 Flask-Session
 PyPDF2
 python-docx
 Werkzeug
 reportlab
 pdfplumber
-ollama
+ollama>=0.1.0
 beautifulsoup4
-requests
+requests>=2.31.0
 typing-extensions
-python-dotenv
+python-dotenv>=0.19.0
 gunicorn
-celery
-redis
+celery>=5.3.0
+redis>=4.0.0
+
+# New dependencies for runner script
+psutil>=5.9.0

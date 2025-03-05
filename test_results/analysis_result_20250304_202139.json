@@ -1,0 +1,40 @@
+{
+  "missing_skills": [
+    {
+      "skill": "Kubernetes and microservices",
+      "suggestion": "Consider gaining hands-on experience with Kubernetes or a similar container orchestration tool, and explain any relevant projects in your resume."
+    },
+    {
+      "skill": "Strong background in AI/ML",
+      "suggestion": "Highlight any relevant AI/ML projects or experiences you have, including the specific technologies used (e.g., TensorFlow, PyTorch)."
+    }
+  ],
+  "improvement_suggestions": [
+    {
+      "current": "5 developers",
+      "suggested": "Led a team of 5 software engineers",
+      "reason": "Using 'engineers' instead of 'developers' aligns more closely with the Senior Software Engineer job title."
+    },
+    {
+      "current": "Led development",
+      "suggested": "Led the development and delivery of cloud-based applications",
+      "reason": "Expanding the description to include 'delivery' emphasizes your ability to take projects from inception to completion."
+    }
+  ],
+  "emphasis_suggestions": [
+    {
+      "experience": "Led development of cloud-based applications",
+      "why_relevant": "This demonstrates your leadership skills and experience working with cloud technologies, which are relevant to the job requirements.",
+      "how_to_emphasize": "Consider emphasizing this experience in the opening summary or at the beginning of your work history."
+    },
+    {
+      "experience": "Managed team of 5 developers",
+      "why_relevant": "This shows your ability to mentor junior developers, which is one of the job responsibilities.",
+      "how_to_emphasize": "Highlight this experience under 'Responsibilities' or in a separate 'Leadership' section."
+    }
+  ],
+  "general_suggestions": [
+    "Add a professional summary highlighting your key skills, experiences, and accomplishments.",
+    "Include relevant certifications or training to strengthen your application (e.g., AWS Certified Solutions Architect)."
+  ]
+}

@@ -107,126 +107,105 @@ def get_task_status(task_id):
     """Get the status of a background task."""
     try:
         task = celery.AsyncResult(task_id)
-        max_wait_time = 600  # 10 minutes maximum wait time
-        start_time = time.time()
         
-        response = {
-            'state': task.state,
-        }
-        
-        # Check if task has been running too long
-        if task.state == 'PROGRESS' and task.info:
-            current_time = time.time()
-            if task.info.get('start_time') and (current_time - task.info['start_time']) > max_wait_time:
-                task.revoke(terminate=True)
-                return jsonify({
-                    'state': 'FAILURE',
-                    'status': 'Task terminated due to timeout',
-                    'chunk': json.dumps({
-                        'status': 'error',
-                        'message': 'Analysis took too long to complete',
-                        'details': 'Please try with shorter content'
-                    })
-                }), 408
-        
-        if task.state == 'PENDING':
-            response.update({
-                'status': 'Task is pending...',
-                'chunk': json.dumps({
-                    'status': 'pending',
-                    'message': 'Starting analysis...'
-                })
-            })
-        elif task.state == 'FAILURE':
-            error_info = task.info or {}
-            error_type = error_info.get('error_type', 'unknown_error')
-            error_msg = error_info.get('exc_message', 'Task failed')
-            
-            error_details = {
-                'timeout': 'The analysis took too long. Try with shorter content.',
-                'validation_error': 'Please check your input and try again.',
-                'analysis_error': 'Analysis failed. Please try again.',
-                'unknown_error': 'An unexpected error occurred.'
+        # Handle case where task state can't be decoded
+        try:
+            current_state = task.state
+        except ValueError:
+            error_info = {
+                'exc_type': 'TaskStateError',
+                'exc_message': 'Unable to decode task state',
+                'exc_module': 'app.routes.analysis',
+                'exc_cls': 'TaskStateError'
             }
-            
-            response.update({
-                'status': error_msg,
-                'error': error_msg,
-                'chunk': json.dumps({
-                    'status': 'error',
-                    'message': error_msg,
-                    'details': error_details.get(error_type, 'Please try again'),
-                    'error_type': error_type
-                })
+            return jsonify({
+                'state': 'FAILURE',
+                'status': error_info['exc_message'],
+                'error': error_info
             })
-            return jsonify(response), 500
+
+        if current_state == 'PENDING':
+            response = {
+                'state': current_state,
+                'status': 'Task is pending...'
+            }
+        elif current_state == 'FAILURE':
+            # Extract error information from task.info if available
+            error_info = task.info
+            if isinstance(error_info, Exception):
+                error_info = {
+                    'exc_type': type(error_info).__name__,
+                    'exc_message': str(error_info),
+                    'exc_module': error_info.__class__.__module__,
+                    'exc_cls': error_info.__class__.__name__
+                }
+            elif not isinstance(error_info, dict) or 'exc_type' not in error_info:
+                error_info = {
+                    'exc_type': 'TaskError',
+                    'exc_message': str(error_info) if error_info else 'Unknown error occurred',
+                    'exc_module': 'app.routes.analysis',
+                    'exc_cls': 'TaskError'
+                }
             
-        elif task.state == 'SUCCESS':
-            if not task.result:
-                return jsonify({
-                    'state': 'FAILURE',
-                    'status': 'No analysis results received',
-                    'chunk': json.dumps({
-                        'status': 'error',
-                        'message': 'No analysis results received',
-                        'details': 'Please try again'
-                    })
-                }), 500
-            
-            # Handle successful result
-            result = task.result.get('result', {})
-            if not isinstance(result, dict):
-                app.logger.error(f"Invalid result format: {result}")
-                return jsonify({
-                    'state': 'FAILURE',
-                    'status': 'Invalid analysis format',
-                    'chunk': json.dumps({
-                        'status': 'error',
-                        'message': 'Invalid analysis format received',
-                        'details': 'The analysis result was not in the expected format'
-                    })
-                }), 500
-            
-            # Check for required sections
-            required_keys = ['missing_skills', 'improvement_suggestions', 'emphasis_suggestions', 'general_suggestions']
-            if not all(key in result for key in required_keys):
-                app.logger.error(f"Missing required sections in result: {result.keys()}")
-                return jsonify({
-                    'state': 'FAILURE',
-                    'status': 'Incomplete analysis results',
-                    'chunk': json.dumps({
-                        'status': 'error',
-                        'message': 'Incomplete analysis results',
-                        'details': 'The analysis is missing some required sections'
-                    })
-                }), 500
-            
-            response['chunk'] = json.dumps({
-                'status': 'completed',
-                'result': result,
-                'execution_time': time.time() - start_time
-            })
-            
-        elif task.state == 'PROGRESS':
+            response = {
+                'state': current_state,
+                'status': error_info.get('exc_message', 'Task failed'),
+                'error': error_info
+            }
+        else:
             if task.info:
-                response['chunk'] = json.dumps({
-                    'status': 'in_progress',
-                    'current': task.info.get('current', 0),
-                    'total': task.info.get('total', 100),
-                    'status_message': task.info.get('status', 'Processing...'),
-                    'execution_time': time.time() - task.info.get('start_time', start_time)
-                })
+                if isinstance(task.info, dict):
+                    if 'status' in task.info:  # Progress update
+                        response = {
+                            'state': current_state,
+                            'chunk': json.dumps(task.info)
+                        }
+                    else:  # Final result
+                        response = {
+                            'state': current_state,
+                            'chunk': json.dumps({
+                                'status': 'completed',
+                                'result': task.info.get('analysis', {}),
+                                'optimized_text': task.info.get('optimized_text', ''),
+                                'original_text': task.info.get('original_text', '')
+                            })
+                        }
+                else:
+                    response = {
+                        'state': current_state,
+                        'status': str(task.info)
+                    }
+            else:
+                response = {
+                    'state': current_state,
+                    'chunk': json.dumps({
+                        'status': 'Processing...'
+                    })
+                }
         
         return jsonify(response)
-        
-    except Exception as e:
-        app.logger.error(f"Failed to check task status: {str(e)}", exc_info=True)
+    except TimeoutError:
+        error_info = {
+            'exc_type': 'TimeoutError',
+            'exc_message': 'Request timed out',
+            'exc_module': 'celery.exceptions',
+            'exc_cls': 'TimeoutError'
+        }
         return jsonify({
             'state': 'FAILURE',
-            'status': 'Failed to check task status',
-            'chunk': json.dumps({
-                'status': 'error',
-                'message': 'Failed to check analysis status',
-                'details': 'An unexpected error occurred. Please try again.'
-            })
+            'status': 'Request timed out',
+            'error': error_info
+        }), 408
+    except Exception as e:
+        app.logger.error(f"Error in get_task_status: {str(e)}", exc_info=True)
+        error_info = {
+            'exc_type': type(e).__name__,
+            'exc_message': str(e),
+            'exc_module': e.__class__.__module__,
+            'exc_cls': e.__class__.__name__
+        }
+        return jsonify({
+            'state': 'FAILURE',
+            'status': str(e),
+            'error': error_info
         }), 500

@@ -1,0 +1,44 @@
+{
+  "missing_skills": [
+    {
+      "skill": "Kubernetes and microservices",
+      "suggestion": "Highlight any relevant experience or projects where you have worked with Kubernetes and microservices. If none, consider gaining practical knowledge through online tutorials or courses."
+    },
+    {
+      "skill": "Strong background in AI/ML",
+      "suggestion": "Detail specific AI/ML projects you have worked on, focusing on the techniques and methodologies used, as well as any results achieved. If none, consider gaining experience through online courses or side projects."
+    },
+    {
+      "skill": "Knowledge of React and Node.js",
+      "suggestion": "Mention any relevant experience with React and/or Node.js, or explain how you can quickly ramp up on these technologies if required."
+    }
+  ],
+  "improvement_suggestions": [
+    {
+      "current": "5 developers",
+      "suggested": "Led a team of 5 software engineers",
+      "reason": "Using the exact job title helps better align with the position being applied for"
+    },
+    {
+      "current": "Led development of cloud-based applications",
+      "suggested": "Led the development and deployment of scalable, high-performance cloud-native applications on AWS",
+      "reason": "Expanding the description to highlight both the development and deployment aspects, as well as the specific cloud platform used, improves the match with the job requirements"
+    }
+  ],
+  "emphasis_suggestions": [
+    {
+      "experience": "Led development of cloud-based applications",
+      "why_relevant": "This experience demonstrates leadership and expertise in software development for the cloud, which aligns well with the job requirements.",
+      "how_to_emphasize": "Explain the specific technologies used, the complexity of the projects, and any notable achievements."
+    },
+    {
+      "experience": "Managed team of 5 developers",
+      "why_relevant": "This experience shows that you have management skills, which will be useful in mentoring junior developers.",
+      "how_to_emphasize": "Highlight your ability to manage and motivate teams, as well as any successful projects delivered under your leadership."
+    }
+  ],
+  "general_suggestions": [
+    "Quantify achievements wherever possible (e.g., 'increased productivity by 30%' or 'reduced costs by 25%').",
+    "Customize the resume for each job application, highlighting relevant skills and experiences."
+  ]
+}

@@ -1,0 +1,58 @@
+2025-03-05 13:09:41 - app - INFO - Session before upload: {'_permanent': True, 'modified_text': 'John Doe\n        Senior Software Engineer\n\n        SUMMARY\n        Experienced software engineer with 6+ years of expertise in full-stack development,\n        cloud architectures, and team leadership. Proven track record of delivering scalable solutions\n        and driving technical innovation.\n\n        SKILLS\n        • Programming: Python, JavaScript, TypeScript, Java\n        • Cloud & DevOps: AWS, Docker, Kubernetes, CI/CD\n        • Web Technologies: React, Node.js, REST APIs\n        • Databases: PostgreSQL, MongoDB\n        • Leadership: Team Management, Agile/Scrum\n\n        EXPERIENCE\n        Senior Software Engineer | TechCorp Inc.\n        2020 - Present\n        • Led development of cloud-native applications using AWS and Kubernetes\n        • Managed team of 5 developers, improving delivery time by 30%\n        • Implemented microservices architecture using Python and Node.js\n\n        Software Engineer | Innovation Labs\n        2018 - 2020\n        • Developed full-stack web applications using React and Node.js\n        • Designed and implemented RESTful APIs serving 1M+ requests daily\n        • Optimized database queries, reducing response time by 40%\n\n        EDUCATION\n        Bachelor of Science in Computer Science\n        Technical University | 2014 - 2018\n        '}
+2025-03-05 13:09:42 - app - INFO - Session after upload: {'_permanent': True, 'modified_text': 'Noel Ugwoke\n306-490-2929 | Email | GitHub | Portfolio\nSKILLS\n• Full-Stack Development: Microsoft .NET, C#, ASP.NET MVC, HTML5, CSS3, JavaScript, REST APIs.\n• Cloud & DevOps: Microsoft Azure (App Services, SQL Database, DevOps), Docker, CI/CD Pipelines.\n• Frameworks: Razor Pages, React, Spring Boot, Entity Framework.\n• Databases: SQL Server, PostgreSQL, MySQL (query optimization, stored procedures).\n• Methodologies: Agile/Scrum, Jira, Confluence, Secure Coding Practices.\n• Soft Skills: Cross-functional collaboration, technical documentation, vendor coordination, problem-solving.\nRELEVANT EXPERIENCE\nFull-Stack .NET/Application Developer – Association of Professional Engineers and Geoscientists of Alberta (APEGA)\nDecember 2022 – November 2024\nSkills Used: React, Python, SQL, Azure Cloud, REST APIs, Ready API, Jira, Confluence, Agile/Scrum.\n• Developed and maintained full-stack .NET applications, unifying front-end and back-end components to deliver seamless user\nexperiences.\n• Migrated legacy systems to Microsoft Azure, leveraging Azure SQL Database and App Services to enhance scalability and security\ncompliance, reducing downtime by 40%.\n• Collaborated with third-party vendors to integrate APIs and manage data integrity during system transitions.\n• Authored technical documentation, including user guides and deployment procedures, to streamline onboarding.\n• Optimized SQL queries and resolved performance bottlenecks, improving data retrieval speeds by 25%.\nWeb Application Developer – Spartan Controls July 2021 – November 2022\nSkills Used: React, Python, SQL, AWS (Lambda), PostgreSQL, Terraform, Tableau, Spring Boot.\n• Built responsive web applications using .NET and JavaScript, focusing on cross-browser compatibility and user-centric design.\n• Automated CI/CD pipelines using Azure DevOps, reducing deployment errors by 30% and accelerating release cycles.\n• Coordinated with Agile teams to deliver iterative updates, ensuring alignment with business requirements and user feedback.\nEMPLOYMENT HISTORY\nData Analyst – Parkland Fuel Corporation May 2020 – January 2021\nSkills Used: AWS (Lambda), Tableau, PowerBI, SQL, Python, ETL Pipelines, Data Modeling, Predictive Analytics.\n• Designed automated ETL workflows, leveraged complex SQL queries and built interactive dashboards for data-driven insights.\n• Streamlined ETL pipelines to process real-time data, improving accuracy and reducing processing time by 35%.\nIT Analyst Intern – Alberta Health Services January 2019 – April 2020\nSkills Used: ServiceNow, Jira, Visual Studio Code, UiPath, , Splunk, SQL, AWS (Lambda), Tableau.\n• Migrated legacy scripts to ServiceNow, automated tasks with UiPath and AWS Lambda, optimized SQL queries, analyzed system\nlogs with Splunk, developed Jira dashboards, and created Tableau reports to enhance IT operations.\nPROJECTS\n• Vaccine Booking Website - Alberta Health Services\no Led front-end development using React and TypeScript, creating a user-friendly interface that supported 10,000+ daily\nbookings.\n• Gas Pipeline Monitoring WebApp\no Full-stack .NET application with Razor Pages for dynamic UI, integrated with Azure cloud services for real-time data\nprocessing.\nEDUCATION\nUniversity of Calgary – BSc Computer Science 2016 - 2022\nBow Valley College – Diploma Software Development 2015 - 2016\nCERTIFICATIONS\nAWS Cloud Practitioner | IBM AI Engineering Professional | Google Cloud Platform Developer', 'original_file_type': 'pdf', 'original_filename': 'Noel_Ugwoke_Resume.pdf', 'formatting': {'sections': [], 'default_font_size': 10, 'line_spacing': {}, 'ai_analysis': None, 'section_analysis': None}, 'upload_timestamp': 1741205381.9522245}
+2025-03-05 13:09:42 - app - INFO - File upload successful: Noel_Ugwoke_Resume.pdf
+2025-03-05 13:10:07 - app - INFO - Processing request with session ID: No ID
+2025-03-05 13:10:07 - app - INFO - Job Description Length: 2023
+2025-03-05 13:10:07 - app - INFO - Resume Text Length: 3419
+2025-03-05 13:10:45 - app - ERROR - Error in get_task_status: Exception information must include the exception type
+Traceback (most recent call last):
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 354, in exception_to_python
+    exc_type = exc['exc_type']
+KeyError: 'exc_type'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/app/routes/analysis.py", line 111, in get_task_status
+    if task.state == 'PENDING':
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/result.py", line 503, in state
+    return self._get_task_meta()['status']
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/result.py", line 442, in _get_task_meta
+    return self._maybe_set_cache(self.backend.get_task_meta(self.id))
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 608, in get_task_meta
+    meta = self._get_task_meta_for(task_id)
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 998, in _get_task_meta_for
+    return self.decode_result(meta)
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 425, in decode_result
+    return self.meta_from_decoded(self.decode(payload))
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 421, in meta_from_decoded
+    meta['result'] = self.exception_to_python(meta['result'])
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 356, in exception_to_python
+    raise ValueError("Exception information must include "
+ValueError: Exception information must include the exception type
+2025-03-05 13:10:45 - app - ERROR - Error in get_task_status: Exception information must include the exception type
+Traceback (most recent call last):
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 354, in exception_to_python
+    exc_type = exc['exc_type']
+KeyError: 'exc_type'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/app/routes/analysis.py", line 111, in get_task_status
+    if task.state == 'PENDING':
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/result.py", line 503, in state
+    return self._get_task_meta()['status']
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/result.py", line 442, in _get_task_meta
+    return self._maybe_set_cache(self.backend.get_task_meta(self.id))
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 608, in get_task_meta
+    meta = self._get_task_meta_for(task_id)
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 998, in _get_task_meta_for
+    return self.decode_result(meta)
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 425, in decode_result
+    return self.meta_from_decoded(self.decode(payload))
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 421, in meta_from_decoded
+    meta['result'] = self.exception_to_python(meta['result'])
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 356, in exception_to_python
+    raise ValueError("Exception information must include "
+ValueError: Exception information must include the exception type

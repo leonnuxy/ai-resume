@@ -14,7 +14,56 @@ function updateProgressCounters() {
     document.getElementById('emphasis-counter').textContent =
         `Emphasis Points: ${window.fullAnalysis.emphasis_suggestions.length}`;
     document.getElementById('general-counter').textContent =
-        `Suggestions: ${window.fullAnalysis.general_suggestions.length}`;
+        `General Suggestions: ${window.fullAnalysis.general_suggestions.length}`;
+}
+
+function formatResumeText(text) {
+    // Split the text into sections
+    const sections = text.split('\n\n');
+    const formattedSections = sections.map(section => {
+        if (section.startsWith('SUMMARY') || section.startsWith('SKILLS') || 
+            section.startsWith('RELEVANT EXPERIENCE') || section.startsWith('ADDITIONAL HIGHLIGHTS')) {
+            // Add section headers in bold
+            return section.replace(/^([A-Z\s]+)(\n|$)/, '<strong>$1</strong>$2');
+        }
+        return section;
+    });
+
+    // Process green highlights
+    return formattedSections.join('\n\n').replace(
+        /<span style="color:green">(.*?)<\/span>/g,
+        '<span class="highlight">$1</span>'
+    );
+}
+
+function updateAnalysisSections(analysis) {
+    // Update missing skills section
+    const missingSkillsList = document.getElementById('missing-skills-list');
+    missingSkillsList.innerHTML = analysis.missing_skills.map(skill => 
+        `<li><strong>${skill.skill}</strong>: ${skill.suggestion}</li>`
+    ).join('');
+
+    // Update improvements section
+    const improvementsList = document.getElementById('improvements-list');
+    improvementsList.innerHTML = analysis.improvement_suggestions.map(imp => 
+        `<li><strong>Current:</strong> ${imp.current}<br>
+         <strong>Suggested:</strong> ${imp.suggested}<br>
+         <em>Reason:</em> ${imp.reason}</li>`
+    ).join('');
+
+    // Update emphasis suggestions
+    const emphasisList = document.getElementById('emphasis-list');
+    emphasisList.innerHTML = analysis.emphasis_suggestions.map(emp => 
+        `<li><strong>${emp.experience}</strong><br>
+         <em>Why relevant:</em> ${emp.why_relevant}<br>
+         <em>How to emphasize:</em> ${emp.how_to_emphasize}</li>`
+    ).join('');
+
+    // Update general suggestions
+    const generalList = document.getElementById('general-list');
+    generalList.innerHTML = analysis.general_suggestions.map(sugg => 
+        `<li>${sugg}</li>`
+    ).join('');
 }
 
 function handleErrorType(error) {
@@ -197,36 +246,38 @@ function formatAnalysisSections(analysis) {
     `;
 }
 
-function showError(message, type = 'error') {
-    const resultDiv = document.getElementById('result');
-    const errorClass = type === 'timeout' ? 'timeout-error' : 'error-message';
+function showError(title, message, detail = '') {
+    const errorDisplay = document.getElementById('error-display');
+    document.getElementById('error-title').textContent = title;
+    document.getElementById('error-message').textContent = message;
+    document.getElementById('error-details').textContent = detail;
+    errorDisplay.classList.add('visible');
+    document.getElementById('status').style.display = 'none';
     
-    resultDiv.innerHTML = `
-        <div class="${errorClass}">
-            <h3>Analysis Error</h3>
-            <p>${message}</p>
-            <div class="error-actions">
-                <p>Suggestions:</p>
-                <ul>
-                    <li>Check that your resume contains complete information</li>
-                    <li>Ensure the job description includes detailed requirements</li>
-                    <li>Try with shorter content if the analysis timed out</li>
-                </ul>
-                <button onclick="window.location.href='/'" class="back-btn">Back to Home</button>
-            </div>
-        </div>
-    `;
-    
-    // Hide the loading spinner
-    const spinner = document.querySelector('.loading-spinner');
-    if (spinner) spinner.style.display = 'none';
+    // Scroll to error
+    errorDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function hideError() {
+    const errorDisplay = document.getElementById('error-display');
+    errorDisplay.classList.remove('visible');
+    document.getElementById('status').style.display = 'block';
+}
+
+function formatErrorMessage(error) {
+    if (error.exc_type && error.exc_message) {
+        return `${error.exc_type}: ${error.exc_message}`;
+    }
+    return error.message || error.toString();
 }
 
 function checkTaskStatus(taskId) {
     fetch(`/analysis/status/${taskId}`)
         .then(response => {
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                return response.json().then(errorData => {
+                    throw new Error(formatErrorMessage(errorData.error || errorData));
+                });
             }
             return response.json();
         })
@@ -241,12 +292,16 @@ function checkTaskStatus(taskId) {
                     }
                 } catch (e) {
                     console.error('JSON parse error:', e);
-                    showError('Invalid response format received');
+                    showError('Error', 'Invalid response format received', e.toString());
                     return; // Stop polling on error
                 }
             }
             else if (data.state === 'FAILURE') {
-                showError(data.status || 'Analysis failed. Please try again.');
+                const errorTitle = data.error?.exc_type || 'Analysis Error';
+                const errorMessage = data.error?.exc_message || data.status || 'Analysis failed';
+                const errorDetail = data.error?.exc_module ? 
+                    `${data.error.exc_module}.${data.error.exc_cls}` : '';
+                showError(errorTitle, errorMessage, errorDetail);
                 return; // Stop polling on failure
             }
             else if (data.state === 'PENDING' || data.state === 'PROGRESS') {
@@ -254,21 +309,26 @@ function checkTaskStatus(taskId) {
                 if (data.chunk) {
                     try {
                         const chunkData = JSON.parse(data.chunk);
-                        handleStreamChunk(chunkData);
+                        if (chunkData.status) {
+                            document.getElementById('status').textContent = chunkData.status;
+                        }
+                        if (chunkData.current && chunkData.total) {
+                            const progress = (chunkData.current / chunkData.total) * 100;
+                            document.querySelector('.progress-fill').style.width = `${progress}%`;
+                        }
                     } catch (e) {
                         console.error('Progress update parse error:', e);
+                        // Continue polling despite progress parse error
                     }
                 }
-            }
-            
-            // Continue polling if still processing
-            if (['PENDING', 'PROGRESS'].includes(data.state)) {
                 setTimeout(() => checkTaskStatus(taskId), 1000);
+            } else {
+                showError('Unexpected State', 'The analysis task entered an unexpected state', data.state);
             }
         })
         .catch(error => {
-            console.error('Status check failed:', error);
-            showError('Failed to communicate with the server. Please try again.');
+            console.error('Error:', error);
+            showError('Connection Error', 'Failed to check analysis status', error.message);
         });
 }
 
@@ -281,6 +341,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (taskId) {
         checkTaskStatus(taskId);
     } else {
-        showError('No task ID provided');
+        showError('Configuration Error', 'No task ID provided');
     }
 });

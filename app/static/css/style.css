@@ -1590,3 +1590,97 @@ input:invalid:focus {
 }
 
 /* ...rest of existing code... */
+
+/* Resume Format Styles */
+.resume-content {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    padding: 2rem;
+    color: #333; /* Ensure base text color is dark enough */
+}
+
+.resume-content span.highlight {
+    color: #006600; /* Darker green for better contrast */
+    font-weight: 600; /* Make it bolder */
+    background-color: rgba(40, 167, 69, 0.1); /* Light green background */
+    padding: 0 3px; /* Add some padding */
+    border-radius: 3px; /* Rounded corners */
+}
+
+.resume-section {
+    margin-bottom: 1.5rem;
+}
+
+.analysis-summary {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.analysis-item {
+    background: white;
+    padding: 1rem;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.analysis-item h4 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.missing-skills-list li,
+.improvements-list li,
+.emphasis-list li,
+.general-list li {
+    margin-bottom: 0.75rem;
+    padding-left: 1.25rem;
+    position: relative;
+}
+
+.missing-skills-list li:before,
+.improvements-list li:before,
+.emphasis-list li:before,
+.general-list li:before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #28a745;
+}
+
+/* Analysis Results Counter */
+.analysis-counts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.count-item {
+    text-align: center;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+}
+
+/* Improve highlight visibility */
+span[style="color:green"] {
+    color: #006600 !important; /* Darker green for better contrast */
+    font-weight: 600; /* Make it bolder */
+    background-color: rgba(40, 167, 69, 0.1); /* Light green background */
+    padding: 0 3px; /* Add some padding */
+    border-radius: 3px; /* Rounded corners */
+}
+
+/* ...rest of existing code... */

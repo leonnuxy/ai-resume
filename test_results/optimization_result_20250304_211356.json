@@ -1,0 +1,39 @@
+{
+  "summary": "Additional Info:\nMissing Skills: 3\nImprovements: 1\nEmphasis Points: 1\nGeneral Suggestions: 2\n\nAnalysis Result:\n{\n  \"missing_skills\": [\n    {\n      \"skill\": \"Kubernetes and microservices\",\n      \"suggestion\": \"Include experiences or projects where you have worked with Kubernetes and microservices to demonstrate your proficiency in these areas.\"\n    },\n    {\n      \"skill\": \"Strong background in AI/ML\",\n      \"suggestion\": \"Detail specific AI/ML projects or accomplishments that highlight your expertise in this area. Consider adding relevant coursework or certifications if necessary.\"\n    },\n    {\n      \"skill\": \"Knowledge of React and Node.js\",\n      \"suggestion\": \"Gain familiarity with React and Node.js by participating in online tutorials, attending workshops, or working on personal projects to showcase this skill.\"\n    }\n  ],\n  \"improvement_suggestions\": [\n    {\n      \"current\": \"5 developers (Senior Developer, Tech Corp)\",\n      \"suggested\": \"Managed a team of 5 experienced software developers in a cloud-based application development project at Tech Corp.\",\n      \"reason\": \"Quantifying the team's experience and role clarification improves the match with the job description.\"\n    }\n  ],\n  \"emphasis_suggestions\": [\n    {\n      \"experience\": \"Led development of cloud-based applications\",\n      \"why_relevant\": \"This experience demonstrates your ability to work on large-scale projects, which is relevant to the job requirement.\",\n      \"how_to_emphasize\": \"Expand upon this experience by discussing challenges faced, solutions implemented, and results achieved in leading cloud application development.\"\n    }\n  ],\n  \"general_suggestions\": [\n    \"Highlight any AI/ML projects or accomplishments in your cover letter or introduction to grab the recruiter's attention.\",\n    \"Customize your resume for each job application by tailoring it specifically to the job requirements and company culture.\"\n  ]\n}",
+  "analysis_results": {
+    "missing_skills": [
+      {
+        "skill": "Kubernetes and microservices",
+        "suggestion": "Include experiences or projects where you have worked with Kubernetes and microservices to demonstrate your proficiency in these areas."
+      },
+      {
+        "skill": "Strong background in AI/ML",
+        "suggestion": "Detail specific AI/ML projects or accomplishments that highlight your expertise in this area. Consider adding relevant coursework or certifications if necessary."
+      },
+      {
+        "skill": "Knowledge of React and Node.js",
+        "suggestion": "Gain familiarity with React and Node.js by participating in online tutorials, attending workshops, or working on personal projects to showcase this skill."
+      }
+    ],
+    "improvement_suggestions": [
+      {
+        "current": "5 developers (Senior Developer, Tech Corp)",
+        "suggested": "Managed a team of 5 experienced software developers in a cloud-based application development project at Tech Corp.",
+        "reason": "Quantifying the team's experience and role clarification improves the match with the job description."
+      }
+    ],
+    "emphasis_suggestions": [
+      {
+        "experience": "Led development of cloud-based applications",
+        "why_relevant": "This experience demonstrates your ability to work on large-scale projects, which is relevant to the job requirement.",
+        "how_to_emphasize": "Expand upon this experience by discussing challenges faced, solutions implemented, and results achieved in leading cloud application development."
+      }
+    ],
+    "general_suggestions": [
+      "Highlight any AI/ML projects or accomplishments in your cover letter or introduction to grab the recruiter's attention.",
+      "Customize your resume for each job application by tailoring it specifically to the job requirements and company culture."
+    ]
+  },
+  "original_resume": "\n    JOHN DOE\n    Software Engineer\n    \n    EXPERIENCE\n    Senior Developer, Tech Corp (2018-Present)\n    - Led development of cloud-based applications\n    - Managed team of 5 developers\n    \n    SKILLS\n    - Python, JavaScript\n    - AWS, Docker\n    - Agile methodology\n    \n    EDUCATION\n    BS Computer Science, University of Technology (2014-2018)\n    ",
+  "optimized_resume": "\n    JOHN DOE\n    Software Engineer\n    \n    EXPERIENCE\n    Senior Developer, Tech Corp (2018-Present)\n    - [UNDERLINE]Led development of cloud-based applications[/UNDERLINE]\n    - Managed team of 5 developers\n    \n    SKILLS\n    - Python, JavaScript\n    - AWS, Docker\n    - Agile methodology\n    \n    EDUCATION\n    BS Computer Science, University of Technology (2014-2018)\n    "
+}

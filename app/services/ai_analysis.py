@@ -319,6 +319,188 @@ Return ONLY a JSON object with this EXACT structure, no other text:
             "general_suggestions": ["An error occurred during analysis. Please try again."]
         }
 
+def optimize_resume(resume_text: str, analysis_results: dict) -> str:
+    """
+    Apply optimization suggestions to the resume text based on analysis results.
+    
+    Args:
+        resume_text (str): Original resume text
+        analysis_results (dict): Analysis results containing suggestions
+        
+    Returns:
+        str: Optimized resume text
+        
+    Raises:
+        TypeError: If inputs are not of the correct type
+        ValueError: If inputs are empty or invalid
+    """
+    try:
+        # Input validation with detailed error messages
+        if resume_text is None:
+            raise TypeError("resume_text cannot be None")
+            
+        if not isinstance(resume_text, str):
+            if hasattr(resume_text, '__str__'):
+                resume_text = str(resume_text)
+            else:
+                raise TypeError(f"resume_text must be a string or convertible to string, got {type(resume_text)}")
+            
+        if not resume_text.strip():
+            raise ValueError("resume_text cannot be empty")
+            
+        if not isinstance(analysis_results, dict):
+            raise TypeError(f"analysis_results must be a dictionary, got {type(analysis_results)}")
+
+        # Deep debug logging
+        import logging
+        logger.debug(f"Resume text type: {type(resume_text)}")
+        logger.debug(f"Analysis results type: {type(analysis_results)}")
+        
+        if 'missing_skills' in analysis_results:
+            logger.debug(f"Missing skills type: {type(analysis_results['missing_skills'])}")
+            logger.debug(f"Missing skills content: {analysis_results['missing_skills']}")
+
+        # Start with a clean string
+        optimized_text = resume_text.strip()
+
+        # Handle missing skills
+        if 'missing_skills' in analysis_results:
+            skills_list = analysis_results['missing_skills']
+            if not isinstance(skills_list, list):
+                logger.warning(f"Expected missing_skills to be a list, but got {type(skills_list)}")
+                skills_list = []
+            
+            # Extract skills with robust type checking
+            skills_to_add = []
+            for i, skill_item in enumerate(skills_list):
+                try:
+                    # Handle different possible skill item formats
+                    if isinstance(skill_item, str):
+                        # Direct string skill
+                        skills_to_add.append(skill_item.strip())
+                    elif isinstance(skill_item, dict):
+                        # Dict with skill property
+                        if 'skill' in skill_item:
+                            if isinstance(skill_item['skill'], str):
+                                # Standard format: {"skill": "Python"}
+                                skills_to_add.append(skill_item['skill'].strip())
+                            elif isinstance(skill_item['skill'], dict) and 'name' in skill_item['skill']:
+                                # Nested format: {"skill": {"name": "Python"}}
+                                if isinstance(skill_item['skill']['name'], str):
+                                    skills_to_add.append(skill_item['skill']['name'].strip())
+                    else:
+                        # Unknown format, convert to string safely
+                        logger.warning(f"Unexpected skill item format at index {i}: {type(skill_item)}")
+                        safe_str = str(skill_item) if hasattr(skill_item, '__str__') else f"Unknown skill format: {type(skill_item)}"
+                        skills_to_add.append(safe_str)
+                        
+                except Exception as e:
+                    logger.warning(f"Error processing skill item at index {i}: {str(e)}")
+                    continue
+            
+            # Only proceed if we have skills to add
+            if skills_to_add:
+                # Ensure all items are strings before joining
+                skills_text = ', '.join(str(skill) for skill in skills_to_add)
+                logger.debug(f"Final skills text: {skills_text}")
+                
+                # Add missing skills section if it doesn't exist
+                if ('Skills' not in optimized_text and 'SKILLS' not in optimized_text):
+                    optimized_text += "\n\nSKILLS:\n" + skills_text
+                elif 'Skills:' in optimized_text:
+                    # If skills section exists with a colon
+                    skills_index = optimized_text.find('Skills:')
+                    next_section = optimized_text.find('\n\n', skills_index)
+                    if next_section == -1:
+                        next_section = len(optimized_text)
+                    optimized_text = (
+                        optimized_text[:skills_index] + 
+                        f"Skills:\n{skills_text}, " + 
+                        optimized_text[skills_index+7:next_section] +
+                        optimized_text[next_section:]
+                    )
+                elif 'SKILLS:' in optimized_text:
+                    skills_index = optimized_text.find('SKILLS:')
+                    next_section = optimized_text.find('\n\n', skills_index)
+                    if next_section == -1:
+                        next_section = len(optimized_text)
+                    optimized_text = (
+                        optimized_text[:skills_index] + 
+                        f"SKILLS:\n{skills_text}, " + 
+                        optimized_text[skills_index+7:next_section] +
+                        optimized_text[next_section:]
+                    )
+
+        # Apply improvement suggestions with defensive type checking
+        improvements = analysis_results.get('improvement_suggestions', [])
+        if not isinstance(improvements, list):
+            logger.warning(f"improvement_suggestions is not a list: {type(improvements)}")
+            improvements = []
+        
+        for i, improvement in enumerate(improvements):
+            try:
+                if isinstance(improvement, dict):
+                    current = improvement.get('current')
+                    suggested = improvement.get('suggested')
+                    
+                    # Ensure both values are strings
+                    if current is not None and suggested is not None:
+                        current_str = str(current).strip()
+                        suggested_str = str(suggested).strip()
+                        
+                        if current_str and current_str in optimized_text:
+                            optimized_text = optimized_text.replace(
+                                current_str,
+                                f'<span style="color:green">{suggested_str}</span>'
+                            )
+                else:
+                    logger.warning(f"Improvement at index {i} is not a dict: {type(improvement)}")
+            except Exception as e:
+                logger.warning(f"Error processing improvement at index {i}: {str(e)}")
+                continue
+
+        # Emphasize relevant experiences with defensive type checking
+        emphasis_list = analysis_results.get('emphasis_suggestions', [])
+        if not isinstance(emphasis_list, list):
+            logger.warning(f"emphasis_suggestions is not a list: {type(emphasis_list)}")
+            emphasis_list = []
+        
+        for i, emphasis in enumerate(emphasis_list):
+            try:
+                if isinstance(emphasis, dict):
+                    experience = emphasis.get('experience')
+                    
+                    # Ensure experience is a string
+                    if experience is not None:
+                        experience_str = str(experience).strip()
+                        
+                        if experience_str and experience_str in optimized_text:
+                            optimized_text = optimized_text.replace(
+                                experience_str,
+                                f'<span style="color:green">{experience_str}</span>'
+                            )
+                else:
+                    logger.warning(f"Emphasis at index {i} is not a dict: {type(emphasis)}")
+            except Exception as e:
+                logger.warning(f"Error processing emphasis at index {i}: {str(e)}")
+                continue
+
+        # Final validation
+        if not optimized_text:
+            logger.warning("Optimization resulted in empty text")
+            return resume_text  # Return original as fallback
+
+        return optimized_text
+
+    except (TypeError, ValueError) as e:
+        logger.error(f"Error in optimize_resume: {str(e)}", exc_info=True)
+        # Return original text instead of raising to avoid task failure
+        return resume_text
+    except Exception as e:
+        logger.error(f"Unexpected error in optimize_resume: {str(e)}", exc_info=True)
+        # Return original text instead of raising to avoid task failure
+        return resume_text
+
 def test_ollama_connection() -> bool:
     """Test the connection to Ollama service."""
     try:
@@ -337,4 +519,4 @@ def test_ollama_connection() -> bool:
         return False
 
 # Ensure the function is exported
-__all__ = ['analyze_resume_for_job', 'analyze_document_structure', 'analyze_resume_sections', 'test_ollama_connection']
+__all__ = ['analyze_resume_for_job', 'analyze_document_structure', 'analyze_resume_sections', 'test_ollama_connection', 'optimize_resume']
