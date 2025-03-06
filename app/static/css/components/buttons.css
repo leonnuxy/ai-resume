@@ -1,0 +1,170 @@
+/* 
+ * buttons.css - Button Components
+ * Styles for all buttons across the application
+ */
+
+/* Base Button */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  border: none;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  text-decoration: none;
+}
+
+/* Primary Button */
+.submit-btn, 
+.optimize-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background-color: var(--primary-color);
+  border: none;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: background-color var(--transition-normal);
+}
+
+.submit-btn:hover, 
+.optimize-btn:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.submit-btn:active, 
+.optimize-btn:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Disabled Button */
+.submit-btn:disabled, 
+.optimize-btn:disabled {
+  background-color: var(--border-color);
+  cursor: not-allowed;
+}
+
+.submit-btn:disabled:hover, 
+.optimize-btn:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Download Button */
+.download-btn {
+  background-color: var(--info-color);
+  color: white;
+}
+
+.download-btn:hover {
+  background-color: #138496;
+}
+
+/* Back Button */
+.back-btn {
+  background-color: #757575;
+  color: white;
+}
+
+.back-btn:hover {
+  background-color: #616161;
+}
+
+/* Fetch Button */
+.fetch-btn {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, var(--success-color) 0%, #45a049 100%);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  transition: all var(--transition-normal);
+}
+
+.fetch-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+/* Action Buttons */
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  border-radius: var(--border-radius-md);
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-icon {
+  margin-right: 0.5rem;
+  font-size: 1.2rem;
+}
+
+/* Close Button */
+.close-btn {
+  padding: 0.5rem 1rem;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background var(--transition-fast);
+}
+
+.close-btn:hover {
+  background: #5a6268;
+}
+
+/* Loading Spinner for Buttons */
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  margin-left: 0.5rem;
+  border: 2px solid white;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Button size variations */
+.btn-block {
+  display: block;
+  width: 100%;
+}
+
+.btn-sm {
+  padding: 0.4rem 0.8rem;
+  font-size: var(--font-size-sm);
+}
+
+.btn-lg {
+  padding: 1rem 2rem;
+  font-size: var(--font-size-lg);
+}

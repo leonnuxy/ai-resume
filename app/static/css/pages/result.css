@@ -1,0 +1,281 @@
+/* 
+ * result.css - Result Page Specific Styles
+ * Styles exclusively for the resume result page
+ */
+
+/* Body styling for results page */
+body {
+  background: var(--bg-gradient);
+  min-height: 100vh;
+}
+
+/* Split Layout */
+.split-container {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  max-width: 1800px;
+  margin: 0 auto;
+  min-height: calc(100vh - 4rem);
+}
+
+/* Preview Pane */
+.preview-pane {
+  flex: 1.5;
+  background: white;
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-pane h2 {
+  margin-bottom: 1.5rem;
+  color: #2c3e50;
+}
+
+/* Preview Content Layout */
+.preview-content {
+  flex: 1;
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+/* Resume Content */
+.resume-content {
+  flex: 1;
+  background-color: white;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  padding: 2rem;
+  overflow-y: auto;
+  max-height: calc(100vh - 250px);
+  white-space: pre-wrap;
+  line-height: 1.6;
+}
+
+/* Resume Sections */
+.resume-section {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.resume-section:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+  color: #2c3e50;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.section-header .section-title {
+  color: #1a237e;
+  font-size: 1.4rem;
+  font-weight: 600;
+  border-bottom-color: var(--secondary-color);
+}
+
+.section-content {
+  color: #34495e;
+  line-height: 1.6;
+  padding-left: 0.5rem;
+}
+
+.section-content p {
+  margin: 0.5rem 0;
+}
+
+/* Subsection styling */
+.subsection-item {
+  margin: 0.5rem 0;
+  padding-left: 1rem;
+  position: relative;
+  line-height: 1.4;
+}
+
+.subsection-item:before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--secondary-color);
+}
+
+/* Controls Pane */
+.controls-pane {
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Job Description Section */
+.job-description-section {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+}
+
+.job-description-section h3 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.job-description-section h3:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background: var(--primary-color);
+  border-radius: 2px;
+}
+
+/* Resume Change Highlights */
+.change-highlight {
+  background-color: rgba(144, 238, 144, 0.3);
+  position: relative;
+  cursor: help;
+  transition: background-color 0.3s;
+  border-radius: 3px;
+  padding: 0 2px;
+}
+
+.change-highlight:hover {
+  background-color: rgba(144, 238, 144, 0.5);
+}
+
+.change-tooltip {
+  position: absolute;
+  background: white;
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 4px;
+  box-shadow: var(--shadow-md);
+  z-index: 1000;
+  max-width: 300px;
+  font-size: 0.9em;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.change-highlight:hover .change-tooltip {
+  opacity: 1;
+}
+
+.tooltip-original {
+  color: var(--error-color);
+  margin: 0.5rem 0;
+  font-style: italic;
+}
+
+.tooltip-reason {
+  color: var(--success-color);
+  font-weight: 500;
+}
+
+/* Action Buttons Section */
+.actions-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Suggestions Preview */
+.suggestions-preview {
+  flex: 1;
+  background-color: white;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  padding: 2rem;
+  overflow-y: auto;
+  max-height: calc(100vh - 250px);
+}
+
+.suggestions-preview h3 {
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+}
+
+.suggestions {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #34495e;
+}
+
+.suggestions h4 {
+  margin: 1.5rem 0 0.5rem;
+  color: #2c3e50;
+  font-size: 1.2rem;
+}
+
+.suggestions ul {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+  list-style-type: none;
+}
+
+.suggestions li {
+  margin: 0.8rem 0;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.suggestions li:before {
+  content: "•";
+  color: var(--secondary-color);
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+}
+
+.highlight {
+  background-color: #fff3cd;
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  margin: 0.2rem 0;
+  display: inline-block;
+  border-left: 3px solid var(--warning-color);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .preview-content {
+    flex-direction: column;
+  }
+  
+  .resume-content,
+  .suggestions-preview {
+    max-height: 500px;
+  }
+}
+
+@media (max-width: 900px) {
+  .split-container {
+    flex-direction: column;
+  }
+  
+  .controls-pane {
+    width: 100%;
+  }
+}

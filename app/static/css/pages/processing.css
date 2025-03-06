@@ -1,0 +1,218 @@
+/* 
+ * processing.css - Processing Page Specific Styles
+ * Styles exclusively for the resume processing page
+ */
+
+/* Container - Main consolidated style for all pages */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  width: 100%;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Processing Page Container */
+body {
+  background: var(--bg-gradient);
+  color: var(--text-color);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+/* Processing Title */
+h1, h2 {
+  text-align: center;
+  color: var(--bg-light);
+  margin-bottom: 1rem;
+}
+
+/* Style for the unique title 'Analyzing your resume...' */
+.analyzing-container {
+  background-color: none;
+  text-align: center;
+  padding: var(--spacing-lg);
+}
+
+.analyzing-title {
+  color: white;
+  font-size: 1.5rem;
+  margin-bottom: var(--spacing-md);
+}
+
+/* Processing Status Message */
+p {
+  text-align: center;
+  color: #e0e0e0;
+  margin-bottom: 2rem;
+}
+
+/* Loading Container */
+#loading {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--spacing-xl);
+  margin: var(--spacing-xl) auto;
+  max-width: 600px;
+  text-align: center;
+}
+
+#loading h2 {
+  color: var(--text-color);
+  margin-bottom: var(--spacing-md);
+}
+
+#status {
+  color: var(--text-muted);
+  margin: var(--spacing-md) 0;
+}
+
+/* Results Container */
+#results {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--spacing-xl);
+  margin: var(--spacing-xl) auto;
+  max-width: 1000px;
+}
+
+/* Analysis Summary */
+.analysis-summary {
+  margin: var(--spacing-xl) 0;
+}
+
+/* Analysis Counts */
+.analysis-counts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+}
+
+.count-item {
+  text-align: center;
+  padding: var(--spacing-md);
+  background: #f8f9fa;
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-light);
+  transition: background 0.3s ease;
+}
+
+.count-item:hover {
+  background: #e9ecef;
+}
+
+/* Resume Comparison */
+.resume-comparison {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-xl);
+  margin-top: var(--spacing-xl);
+}
+
+.resume-panel {
+  padding: var(--spacing-lg);
+  border: 1px solid var(--border-light);
+  border-radius: var(--border-radius-md);
+  background: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.resume-panel h4 {
+  color: var(--text-color);
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--border-light);
+}
+
+/* Highlighted Text */
+.highlight {
+  color: var(--success-color);
+  font-weight: normal;
+  background-color: rgba(40, 167, 69, 0.1);
+  padding: 0 3px;
+  border-radius: 3px;
+}
+
+/* Suggestion Lists */
+.section-header {
+  font-weight: bold;
+  margin-top: var(--spacing-lg);
+  color: var(--text-color);
+}
+
+.suggestion-list {
+  margin: var(--spacing-md) 0;
+  padding-left: var(--spacing-xl);
+}
+
+.suggestion-list li {
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: #f8f9fa;
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-light);
+}
+
+.suggestion-list li:hover {
+  border-color: var(--primary-color);
+}
+
+.suggestion-list strong {
+  color: var(--text-color);
+}
+
+.suggestion-list em {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Live Preview */
+.live-preview {
+  background: white;
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-xl);
+  margin: var(--spacing-xl) auto;
+  max-width: -webkit-fill-available;
+  box-shadow: var(--shadow-md);
+}
+
+/* Analysis Summary */
+
+.analysis-summary {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-xl);
+  margin-top: var(--spacing-xl);
+}
+
+/* Media Queries */
+@media (max-width: 1200px) {
+  .container {
+    max-width: 95%;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+  
+  .analysis-counts {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .resume-panel {
+    padding: var(--spacing-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .analysis-counts {
+    grid-template-columns: 1fr;
+  }
+}

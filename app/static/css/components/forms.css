@@ -1,0 +1,180 @@
+/* 
+ * forms.css - Form Components
+ * Styles for all form elements and inputs
+ */
+
+/* Form Groups */
+.input-group {
+  margin-bottom: var(--spacing-lg);
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: var(--spacing-sm);
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+/* Text Inputs */
+input[type="text"],
+input[type="email"],
+input[type="url"],
+input[type="password"],
+input[type="number"],
+input[type="search"],
+textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  font-family: inherit;
+  font-size: var(--font-size-md);
+  color: var(--text-color);
+  transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="url"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="search"]:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+/* Textarea */
+textarea {
+  resize: vertical;
+  min-height: 150px;
+}
+
+/* URL Input Groups */
+.url-input-group {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+
+.url-input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-sm);
+}
+
+/* File Upload Styles */
+.upload-section {
+  background: white;
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.upload-icon {
+  display: inline-block;
+  cursor: pointer;
+  border: 2px dashed var(--border-color);
+  border-radius: var(--border-radius-md);
+  margin: var(--spacing-md) 0;
+  transition: border-color var(--transition-normal);
+}
+
+.upload-icon:hover {
+  border-color: var(--primary-color);
+}
+
+.upload-icon img {
+  width: 48px;
+  height: 48px;
+}
+
+/* Hide native file input */
+input[type="file"] {
+  display: none;
+}
+
+.file-name {
+  display: block;
+  margin-top: var(--spacing-sm);
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* Form Validation */
+input:invalid,
+textarea:invalid {
+  border-color: var(--error-color);
+}
+
+input:invalid:focus,
+textarea:invalid:focus {
+  border-color: var(--error-color);
+  box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.1);
+}
+
+/* Toggle Input Type */
+.toggle-input-type {
+  text-align: center;
+  margin: var(--spacing-md) 0;
+}
+
+.toggle-input-type button {
+  background: none;
+  border: none;
+  color: var(--secondary-color);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  text-decoration: underline;
+}
+
+.toggle-input-type button:hover {
+  color: var(--secondary-hover);
+}
+
+/* Job Description Section */
+.job-description-section {
+  background: var(--bg-light);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--spacing-xl);
+}
+
+.job-description-section h3 {
+  color: var(--text-color);
+  margin-bottom: var(--spacing-md);
+}
+
+/* Progress Container */
+.progress-container {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md) 0;
+  border-top: 1px solid var(--border-light);
+}
+
+.progress-bar {
+  height: 6px;
+  background-color: var(--border-light);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: var(--spacing-sm);
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: var(--success-color);
+  width: 0;
+  transition: width 0.5s ease-in-out;
+}
+
+.progress-status {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  text-align: center;
+}

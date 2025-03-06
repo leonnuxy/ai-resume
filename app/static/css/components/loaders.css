@@ -1,0 +1,139 @@
+/* 
+ * loaders.css - Loading and Progress Components
+ * Styles for spinners, progress bars, and loading states
+ */
+
+/* Loading Spinner */
+.loading-spinner {
+  width: 30px;
+  height: 30px;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 1em auto;
+}
+
+/* Large Loading Spinner */
+.loading-spinner.large {
+  width: 50px;
+  height: 50px;
+  border-width: 5px;
+}
+
+/* Small Loading Spinner */
+.loading-spinner.small {
+  width: 20px;
+  height: 20px;
+  border-width: 3px;
+}
+
+/* Progress Bar */
+.progress-bar {
+  background-color: #f0f0f0;
+  height: 8px;
+  border-radius: 4px;
+  margin: 1rem 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar .progress {
+  background: linear-gradient(90deg, var(--success-color), #45a049);
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease-in-out;
+  position: relative;
+}
+
+/* Progress Container */
+.progress-container {
+  margin-top: var(--spacing-md);
+}
+
+.progress-status {
+  margin-top: var(--spacing-sm);
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* Progress Counter */
+.progress-counter {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-md);
+  margin: var(--spacing-md) 0;
+}
+
+.progress-item {
+  flex: 1;
+  text-align: center;
+  padding: var(--spacing-sm);
+  background: #fff;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-normal);
+}
+
+.progress-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Progress Message */
+.progress-message {
+  text-align: center;
+  margin: var(--spacing-md) 0;
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* Loading Container */
+.loading {
+  text-align: center;
+  padding: var(--spacing-xl) 0;
+}
+
+/* Loading Button State */
+.btn.loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.btn.loading:after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: -0.75rem 0 0 -0.75rem;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Spin Animation */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Pulse Animation */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(52, 152, 219, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(52, 152, 219, 0);
+  }
+}
+
+/* Button Focus Animation */
+.optimize-btn:focus {
+  animation: pulse 1.5s infinite;
+}

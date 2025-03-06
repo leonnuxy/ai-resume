@@ -1,0 +1,107 @@
+/* 
+ * variables.css - Global CSS variables
+ * Contains color scheme, typography settings, and common measurements
+ */
+
+:root {
+  /* Color Palette */
+  --primary-color: #007bff;
+  --primary-hover: #0056b3;
+  --secondary-color: #667eea;
+  --secondary-hover: #764ba2;
+  --success-color: #28a745;
+  --warning-color: #ffc107;
+  --error-color: #dc3545;
+  --info-color: #17a2b8;
+  
+  /* Text Colors */
+  --text-color: #333;
+  --text-muted: #6c757d;
+  --text-light: #f8f9fa;
+  
+  /* Background Colors */
+  --bg-color: #f8f9fa;
+  --bg-dark: #343a40;
+  --bg-light: #ffffff;
+  --bg-gradient: linear-gradient(135deg, #25305f, #0e021b);
+  
+  /* Border Colors */
+  --border-color: #dee2e6;
+  --border-light: #e9ecef;
+  --border-dark: #ced4da;
+  
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-xxl: 3rem;
+  
+  /* Font Sizes */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
+  --font-size-xxl: 2rem;
+  
+  /* Border Radius */
+  --border-radius-sm: 0.25rem;
+  --border-radius-md: 0.5rem;
+  --border-radius-lg: 0.75rem;
+  
+  /* Box Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  
+  /* Layout */
+  --container-max-width: 1200px;
+  --header-height: 60px;
+  --footer-height: 60px;
+}
+
+/* Header Styles */
+h1 {
+  color: var(--primary-color);
+  font-size: var(--font-size-xxl);
+  font-weight: 700;
+}
+h2 {
+  color: var(--secondary-color);
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+}
+h3 {
+  color: var(--success-color);
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+}
+h4 {
+  color: var(--warning-color);
+  font-size: var(--font-size-md);
+  font-weight: 500;
+}
+h5 {
+  color: var(--error-color);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+h6 {
+  color: var(--info-color);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+}
+
+/* Body Text Styles */
+body {
+  color: var(--text-color);
+  font-size: var(--font-size-md);
+  font-weight: 400;
+}

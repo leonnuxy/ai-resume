@@ -1,81 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="AI-powered resume parser and job description analyzer" />
-    <meta name="keywords" content="resume parser, job analysis, AI resume optimization" />
-    <meta name="robots" content="index, follow" />
-    <title>AI Resume Parser & Optimizer</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
-  </head>
-  <body>
-    <header>
-      <h1 class="page-title">Resume Parser</h1>
-    </header>
-    
-    <main class="container">
-      <section id="upload-container" aria-labelledby="upload-title">
-        <h2 id="upload-title" class="visually-hidden">Upload Resume</h2>
-        <form id="resume-form" action="{{ url_for('main.upload_file') }}" method="post" enctype="multipart/form-data">
-          <div class="upload-section">
-            <p>Upload your resume in PDF, DOCX, or TXT format</p>
-            <label for="resume" class="upload-icon">
-              <img src="{{ url_for('static', filename='icons/upload_icon.png') }}" alt="Upload icon" />
-              <span class="visually-hidden">Choose file</span>
-            </label>
-            <span id="file-name" class="file-name" aria-live="polite">No file selected</span>
-            <input 
-              id="resume" 
-              type="file" 
-              name="resume" 
-              accept=".pdf,.docx,.txt" 
-              required 
-              aria-required="true"
-              aria-describedby="file-name">
-          </div>
-          <button type="submit" class="submit-btn" data-loading-text="Uploading...">
-            <span class="btn-text">Parse Resume</span>
-            <span class="loading-spinner hidden"></span>
-          </button>
-        </form>
-      </section>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AI-powered resume parser and job description analyzer" />
+  <meta name="keywords" content="resume parser, job analysis, AI resume optimization" />
+  <meta name="robots" content="index, follow" />
+  <title>AI Resume Parser & Optimizer</title>
+  <!-- Main CSS with shared styles -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
+  <!-- Page specific CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/index.css') }}" />
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+</head>
 
-      <section id="analysis-container" class="hidden" aria-labelledby="analysis-title">
-        <h2 id="analysis-title">Job Description Analysis</h2>
-        <div class="job-description-section">
-          <h3>Enter Job Description</h3>
-          <div class="input-group">
-            <textarea 
-              id="job_description" 
-              name="job_description" 
-              rows="8" 
-              placeholder="Paste the job description here..."
-              required
-              minlength="50"
-              aria-required="true"
-              aria-label="Job Description"></textarea>
-          </div>
-          <button id="analyze-btn" class="optimize-btn" data-loading-text="Analyzing...">
-            <span class="btn-text">Analyze & Optimize Resume</span>
-            <span class="loading-spinner hidden"></span>
-          </button>
+<body>
+  <header>
+    <h1 class="page-title">Resume Parser</h1>
+  </header>
+  
+    <section id="upload-container" aria-labelledby="upload-title">
+      <h2 id="upload-title" class="visually-hidden">Upload Resume</h2>
+      <form id="resume-form" action="{{ url_for('main.upload_file') }}" method="post" enctype="multipart/form-data">
+        <div class="upload-section">
+          
+          <label for="resume" class="upload-icon">
+            <img src="{{ url_for('static', filename='icons/upload_icon.png') }}" alt="Upload icon" />
+            <span class="visually-hidden">Choose file</span>
+          </label>
+          <p>Upload your resume in PDF, DOCX, or TXT format</p>
+          <span id="file-name" class="file-name" aria-live="polite">No file selected</span>
+          <input 
+            id="resume" 
+            type="file" 
+            name="resume" 
+            accept=".pdf,.docx,.txt" 
+            required 
+            aria-required="true"
+            aria-describedby="file-name">
         </div>
-      </section>
+        <button type="submit" class="submit-btn" data-loading-text="Uploading...">
+          <span class="btn-text">Parse Resume</span>
+          <span class="loading-spinner hidden"></span>
+        </button>
+      </form>
+    </section>
 
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          <div class="flash-messages" role="alert" aria-live="polite">
-            {% for category, message in messages %}
-              <div class="alert alert-{{ category }}">{{ message }}</div>
-            {% endfor %}
-          </div>
-        {% endif %}
-      {% endwith %}
-      
-      <div id="error-container" class="error-message hidden" role="alert" aria-live="assertive"></div>
-    </main>
+    <section id="analysis-container" class="hidden" aria-labelledby="analysis-title">
+      <h2 id="analysis-title">Job Description Analysis</h2>
+      <div class="job-description-section">
+        <h3>Enter Job Description</h3>
+        <div class="input-group">
+          <textarea 
+            id="job_description" 
+            name="job_description" 
+            rows="8" 
+            placeholder="Paste the job description here..."
+            required
+            minlength="50"
+            aria-required="true"
+            aria-label="Job Description"></textarea>
+        </div>
+        <button id="analyze-btn" class="optimize-btn" data-loading-text="Analyzing...">
+          <span class="btn-text">Analyze & Optimize Resume</span>
+          <span class="loading-spinner hidden"></span>
+        </button>
+      </div>
+    </section>
 
-    <script src="{{ url_for('static', filename='js/form-handler.js') }}"></script>
-  </body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages" role="alert" aria-live="polite">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    
+    <div id="error-container" class="error-message hidden" role="alert" aria-live="assertive"></div>
+
+  <script src="{{ url_for('static', filename='js/form-handler.js') }}"></script>
+</body>
 </html>

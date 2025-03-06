@@ -4,100 +4,13 @@
 <head>
     <title>Resume Analysis - Processing</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <style>
-        .resume-comparison {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .resume-panel {
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            white-space: pre-wrap;
-            line-height: 1.6;
-        }
-        .highlight {
-            color: green;
-            font-weight: normal;
-        }
-        .loading {
-            text-align: center;
-            margin: 20px;
-        }
-        .analysis-summary {
-            margin: 20px 0;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-        }
-        .analysis-counts {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .count-item {
-            padding: 10px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .section-header {
-            font-weight: bold;
-            margin-top: 15px;
-            color: #333;
-        }
-        .suggestion-list {
-            margin: 10px 0;
-            padding-left: 20px;
-        }
-        .error-display {
-            background-color: #fff3f3;
-            border-left: 4px solid #dc3545;
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 4px;
-            display: none;
-        }
-        .error-display.visible {
-            display: block;
-            animation: slideIn 0.3s ease-out;
-        }
-        .error-title {
-            color: #dc3545;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-        .error-message {
-            color: #666;
-            margin-bottom: 1rem;
-        }
-        .error-details {
-            font-family: monospace;
-            background: #f8f9fa;
-            padding: 0.5rem;
-            border-radius: 3px;
-            font-size: 0.9em;
-            margin-top: 0.5rem;
-        }
-        @keyframes slideIn {
-            from { 
-                transform: translateY(-10px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-    </style>
 </head>
 
 <body>
     <div id="loading" class="loading">
-        <h2>Analyzing your resume...</h2>
+        <div class="analyzing-container">
+            <h2 class="analyzing-title">Analyzing your resume...</h2>
+        </div>
         <p id="status">Please wait...</p>
         <div id="error-display" class="error-display">
             <div class="error-title" id="error-title"></div>
@@ -108,7 +21,7 @@
 
     <div id="results" style="display: none;">
         <h2>Analysis Results</h2>
-        <div class="analysis-summary">
+        <div class="analysis-summary-stats">
             <div class="analysis-counts">
                 <div class="count-item" id="missing-skills-counter">Missing Skills: 0</div>
                 <div class="count-item" id="improvements-counter">Improvements: 0</div>
@@ -116,26 +29,30 @@
                 <div class="count-item" id="general-counter">General Suggestions: 0</div>
             </div>
         </div>
-        
-        <div class="resume-comparison">
-            <div class="resume-panel">
-                <h4>Optimized Resume with Suggestions</h4>
-                <div id="optimized-text"></div>
+
+        <div class="container">
+            <div class="resume-comparison">
+                <div class="resume-panel">
+                    <h4>Optimized Resume with Suggestions</h4>
+                    <div id="optimized-text"></div>
+                </div>
             </div>
         </div>
-        
-        <div class="analysis-summary">
-            <div class="section-header">Missing Skills:</div>
-            <ul class="suggestion-list" id="missing-skills-list"></ul>
-            
-            <div class="section-header">Improvements:</div>
-            <ul class="suggestion-list" id="improvements-list"></ul>
-            
-            <div class="section-header">Emphasis Points:</div>
-            <ul class="suggestion-list" id="emphasis-list"></ul>
-            
-            <div class="section-header">General Suggestions:</div>
-            <ul class="suggestion-list" id="general-list"></ul>
+
+        <div class="container">
+            <div class="analysis-summary">
+                <div class="section-header">Missing Skills:</div>
+                <ul class="suggestion-list" id="missing-skills-list"></ul>
+
+                <div class="section-header">Improvements:</div>
+                <ul class="suggestion-list" id="improvements-list"></ul>
+
+                <div class="section-header">Emphasis Points:</div>
+                <ul class="suggestion-list" id="emphasis-list"></ul>
+
+                <div class="section-header">General Suggestions:</div>
+                <ul class="suggestion-list" id="general-list"></ul>
+            </div>
         </div>
     </div>
 
@@ -143,38 +60,38 @@
     <script>
         function formatOptimizedText(text, analysis) {
             let formattedText = text;
-            
+
             // Replace green-highlighted sections
             const greenHighlights = formattedText.match(/<span style="color:green">(.*?)<\/span>/g) || [];
             greenHighlights.forEach(match => {
                 formattedText = formattedText.replace(match, `<span class="highlight">${match.replace(/<[^>]+>/g, '')}</span>`);
             });
-            
+
             return formattedText;
         }
 
         function updateAnalysisSections(analysis) {
             // Update missing skills
             const missingSkillsList = document.getElementById('missing-skills-list');
-            missingSkillsList.innerHTML = analysis.missing_skills.map(skill => 
+            missingSkillsList.innerHTML = analysis.missing_skills.map(skill =>
                 `<li><strong>${skill.skill}</strong>: ${skill.suggestion}</li>`
             ).join('');
 
             // Update improvements
             const improvementsList = document.getElementById('improvements-list');
-            improvementsList.innerHTML = analysis.improvement_suggestions.map(imp => 
+            improvementsList.innerHTML = analysis.improvement_suggestions.map(imp =>
                 `<li><strong>Current:</strong> ${imp.current}<br><strong>Suggested:</strong> ${imp.suggested}<br><em>Reason:</em> ${imp.reason}</li>`
             ).join('');
 
             // Update emphasis points
             const emphasisList = document.getElementById('emphasis-list');
-            emphasisList.innerHTML = analysis.emphasis_suggestions.map(emp => 
+            emphasisList.innerHTML = analysis.emphasis_suggestions.map(emp =>
                 `<li><strong>${emp.experience}</strong><br><em>Why relevant:</em> ${emp.why_relevant}<br><em>How to emphasize:</em> ${emp.how_to_emphasize}</li>`
             ).join('');
 
             // Update general suggestions
             const generalList = document.getElementById('general-list');
-            generalList.innerHTML = analysis.general_suggestions.map(sugg => 
+            generalList.innerHTML = analysis.general_suggestions.map(sugg =>
                 `<li>${sugg}</li>`
             ).join('');
         }
@@ -204,28 +121,28 @@
                         if (result.status === 'completed') {
                             document.getElementById('loading').style.display = 'none';
                             document.getElementById('results').style.display = 'block';
-                            
+
                             // Format and display optimized text
                             const optimizedText = formatOptimizedText(result.optimized_text, result.analysis);
                             document.getElementById('optimized-text').innerHTML = optimizedText;
-                            
+
                             // Update analysis sections
                             updateAnalysisSections(result.analysis);
-                            
+
                             // Update counters
-                            document.getElementById('missing-skills-counter').textContent = 
+                            document.getElementById('missing-skills-counter').textContent =
                                 `Missing Skills: ${result.analysis.missing_skills.length}`;
-                            document.getElementById('improvements-counter').textContent = 
+                            document.getElementById('improvements-counter').textContent =
                                 `Improvements: ${result.analysis.improvement_suggestions.length}`;
-                            document.getElementById('emphasis-counter').textContent = 
+                            document.getElementById('emphasis-counter').textContent =
                                 `Emphasis Points: ${result.analysis.emphasis_suggestions.length}`;
-                            document.getElementById('general-counter').textContent = 
+                            document.getElementById('general-counter').textContent =
                                 `General Suggestions: ${result.analysis.general_suggestions.length}`;
                         }
                     } else if (data.state === 'FAILURE') {
                         const errorTitle = data.error?.exc_type || 'Analysis Error';
                         const errorMessage = data.error?.exc_message || data.status || 'An error occurred during analysis';
-                        const errorDetails = data.error?.exc_module ? 
+                        const errorDetails = data.error?.exc_module ?
                             `${data.error.exc_module}.${data.error.exc_cls}` : '';
                         showError(errorTitle, errorMessage, errorDetails);
                     } else {

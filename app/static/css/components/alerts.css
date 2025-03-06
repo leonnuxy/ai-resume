@@ -1,0 +1,184 @@
+/* 
+ * alerts.css - Alert and Message Components
+ * Styles for flash messages, error displays, and status indicators
+ */
+
+/* Flash Messages */
+.flash-messages {
+  margin: var(--spacing-md) 0;
+}
+
+/* Base Alert */
+.alert {
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--spacing-sm);
+  box-shadow: var(--shadow-sm);
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Alert Variants */
+.alert-error, 
+.alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.alert-warning {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+.alert-info {
+  background-color: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
+}
+
+/* Error Message Container */
+.error-message {
+  background-color: #fff3f3;
+  border-left: 4px solid var(--error-color);
+  color: #721c24;
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+  margin: var(--spacing-md) 0;
+  position: relative;
+  animation: slideIn 0.3s ease-out;
+}
+
+.error-message h3 {
+  margin-bottom: var(--spacing-sm);
+  color: var(--error-color);
+}
+
+.error-message p {
+  color: #666;
+  margin-bottom: var(--spacing-md);
+}
+
+/* Error Popup */
+.error-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.error-popup.hidden {
+  display: none;
+}
+
+.error-content {
+  background: white;
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  max-width: 500px;
+  width: 90%;
+}
+
+.error-content h4 {
+  color: var(--error-color);
+  margin-bottom: var(--spacing-md);
+  font-size: var(--font-size-lg);
+}
+
+/* Error Display for Processing Page */
+.error-display {
+  background-color: #fff3f3;
+  border-left: 4px solid var(--error-color);
+  padding: var(--spacing-md);
+  margin: var(--spacing-md) 0;
+  border-radius: var(--border-radius-md);
+  display: none;
+}
+
+.error-display.visible {
+  display: block;
+  animation: slideIn 0.3s ease-out;
+}
+
+.error-title {
+  color: var(--error-color);
+  margin-bottom: var(--spacing-sm);
+  font-weight: 600;
+}
+
+.error-message {
+  color: #666;
+  margin-bottom: var(--spacing-md);
+}
+
+.error-details {
+  font-family: monospace;
+  background: #f8f9fa;
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  font-size: 0.9em;
+  margin-top: var(--spacing-sm);
+}
+
+/* Status Messages */
+.status-message {
+  padding: var(--spacing-md);
+  margin: var(--spacing-md) 0;
+  border-radius: var(--border-radius-md);
+  text-align: center;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.status-message.pending {
+  background-color: #fff3cd;
+  border: 1px solid #ffeeba;
+  color: #856404;
+}
+
+.status-message.success {
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+}
+
+.status-message.error {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+}
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

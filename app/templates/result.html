@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Optimized Resume</title>
+    <title>Parsed Resume</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
@@ -26,7 +26,7 @@
     <div class="split-container">
         <!-- Left side: Optimized Resume Preview -->
         <div class="preview-pane">
-            <h2>Optimized Resume</h2>
+            <h2>Parsed Resume</h2>
             <div class="preview-content optimized-resume">
                 {% if suggestions %}
                 {{ suggestions|safe }}
@@ -65,7 +65,6 @@
                     <div class="input-group">
                         <label for="job_description">
                             <span>Job Description</span>
-                            <span class="toggle-url" id="toggleUrl">(or use URL instead)</span>
                         </label>
                         <textarea 
                             name="job_description" 

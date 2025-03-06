@@ -16,10 +16,30 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-  line-height: 1.6;
-  color: var(--text-color);
-  background-color: var(--bg-color);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+}
+
+h1, h2 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+h2 {
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+p {
+    margin-bottom: 1rem;
+    color: var(--text-color);
 }
 
 /* Accessibility */
@@ -35,22 +55,16 @@ body {
 }
 
 /* Layout */
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
 header {
   padding: 1rem;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.page-title {
+/* .page-title {
   text-align: center;
   color: var(--bg-color);
   margin-bottom: 2rem;
-}
+} */
 
 /* Forms */
 .upload-section {
@@ -203,23 +217,23 @@ textarea {
   }
   
   /* Page title */
-  .page-title {
+  /* .page-title {
     text-align: center;
     width: 100%;
     padding: 1rem 0;
     margin-bottom: 1rem;
     border-bottom: 2px solid #e0e0e0;
     position: relative;
-  }
+  } */
   
-  .page-title h1 {
+  /* .page-title h1 {
     font-size: 2.5rem;
     color: #fff;
     font-weight: 600;
     margin-bottom: 0.5rem;
-  }
+  } */
   
-  .page-title:after {
+  /* .page-title:after {
     content: '';
     position: absolute;
     bottom: -2px;
@@ -229,17 +243,7 @@ textarea {
     height: 3px;
     background: linear-gradient(135deg, #667eea, #764ba2);
     border-radius: 3px;
-  }
-  
-  /* Main container */
-  .container {
-    width: 100%;
-    max-width: 500px;
-    background-color: #fff;
-    border-radius: 8px;
-    padding: 2rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
+  } */
   
   /* Upload section */
   .upload-section {
@@ -425,7 +429,6 @@ textarea {
 }
 
 .resume-content pre {
-    white-space: pre-wrap;
     font-family: 'Courier New', Courier, monospace;
     line-height: 1.5;
     font-size: 14px;
@@ -541,7 +544,6 @@ textarea {
 .job-description-section textarea {
     width: 100%;
     padding: 1rem;
-    margin: 1rem 0;
     border: 1px solid #e1e8ed;
     border-radius: 8px;
     font-family: inherit;
@@ -920,10 +922,10 @@ textarea {
     border: 1px solid #e1e8ed;
     border-radius: 8px;
     font-family: inherit;
-    font-size: 0.95rem;
+    font-size: 0.70rem;
     line-height: 1.6;
     resize: vertical;
-    min-height: 150px;
+    min-height: 250px;
 }
 
 .url-input-group {
@@ -1222,13 +1224,6 @@ textarea {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-/* Processing container */
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
-}
-
 /* Processing title */
 h1 {
     text-align: center;
@@ -1240,7 +1235,7 @@ h1 {
 p {
     text-align: center;
     color: #7f8c8d;
-    margin-bottom: 2rem;
+    margin-bottom: 8rem;
 }
 
 /* ...existing code... */
@@ -1269,6 +1264,7 @@ p {
     color: #666;
     font-size: 0.9rem;
 }
+
 
 /* Error Message Improvements */
 .error-message {
@@ -1595,7 +1591,6 @@ input:invalid:focus {
 .resume-content {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
     line-height: 1.6;
-    white-space: pre-wrap;
     padding: 2rem;
     color: #333; /* Ensure base text color is dark enough */
 }
@@ -1612,14 +1607,15 @@ input:invalid:focus {
     margin-bottom: 1.5rem;
 }
 
-.analysis-summary {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    margin: 2rem 0;
-    padding: 1.5rem;
-    background: #f8f9fa;
-    border-radius: 8px;
+/* Combined Analysis Summary styles */
+.analysis-summary-stats {
+    display: contents;
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .analysis-item {
@@ -1659,11 +1655,7 @@ input:invalid:focus {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
-    margin-bottom: 2rem;
     padding: 1rem;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .count-item {
@@ -1672,6 +1664,11 @@ input:invalid:focus {
     background: #f8f9fa;
     border-radius: 6px;
     border: 1px solid #e9ecef;
+    transition: background 0.3s ease;
+}
+
+.count-item:hover {
+    background: #e9ecef;
 }
 
 /* Improve highlight visibility */
@@ -1684,3 +1681,92 @@ span[style="color:green"] {
 }
 
 /* ...rest of existing code... */
+
+/* ===================== */
+/* Processing Page Styles */
+/* ===================== */
+
+/* Resume Comparison Layout */
+.resume-comparison {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.resume-panel {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    white-space: pre-wrap;
+    line-height: 1.6;
+}
+
+.highlight {
+    color: green;
+    font-weight: normal;
+}
+
+.loading {
+    text-align: center;
+    margin: 20px;
+}
+
+/* Additional Analysis Summary Styles */
+.section-header {
+    font-weight: bold;
+    margin-top: 15px;
+    color: #333;
+}
+
+.suggestion-list {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+/* Error Display Styling */
+.error-display {
+    background-color: #fff3f3;
+    border-left: 4px solid #dc3545;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 4px;
+    display: none;
+}
+
+.error-display.visible {
+    display: block;
+    animation: slideIn 0.3s ease-out;
+}
+
+.error-title {
+    color: #dc3545;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.error-message {
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.error-details {
+    font-family: monospace;
+    background: #f8f9fa;
+    padding: 0.5rem;
+    border-radius: 3px;
+    font-size: 0.9em;
+    margin-top: 0.5rem;
+}
+
+/* Animation for Error Display */
+@keyframes slideIn {
+    from { 
+        transform: translateY(-10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
