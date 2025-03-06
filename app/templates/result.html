@@ -33,22 +33,75 @@
                 {% else %}
                 <div class="resume-content">
                     {% if session_data and session_data.get('formatting') %}
-                    {% for section in session_data.formatting.section_analysis.sections %}
-                    <div class="resume-section {% if section.formatting.is_header %}section-header{% endif %}">
-                        <h3 class="section-title">{{ section.name }}</h3>
-                        <div class="section-content">
-                            {% if section.content %}
-                            {% for item in section.content %}
-                            {% if item.startswith('•') %}
-                            <div class="subsection-item">{{ item }}</div>
-                            {% else %}
-                            <p>{{ item }}</p>
+                    <!-- Organize content into distinct subsections -->
+                    <!-- Skills Section -->
+                    <div class="resume-subsection">
+                        <h3 class="subsection-title">Skills</h3>
+                        {% for section in session_data.formatting.section_analysis.sections %}
+                            {% if section.name|lower in ['skills', 'technical skills', 'core competencies', 'proficiencies', 'capabilities'] %}
+                            <div class="resume-section {% if section.formatting.is_header %}section-header{% endif %}">
+                                <h4 class="section-title">{{ section.name }}</h4>
+                                <div class="section-content">
+                                    {% if section.content %}
+                                    {% for item in section.content %}
+                                    {% if item.startswith('•') %}
+                                    <div class="subsection-item">{{ item }}</div>
+                                    {% else %}
+                                    <p>{{ item }}</p>
+                                    {% endif %}
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
                             {% endif %}
-                            {% endfor %}
-                            {% endif %}
-                        </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
+                    
+                    <!-- Experience Section -->
+                    <div class="resume-subsection">
+                        <h3 class="subsection-title">Experience</h3>
+                        {% for section in session_data.formatting.section_analysis.sections %}
+                            {% if section.name|lower in ['experience', 'work experience', 'employment history', 'professional experience', 'career history'] %}
+                            <div class="resume-section {% if section.formatting.is_header %}section-header{% endif %}">
+                                <h4 class="section-title">{{ section.name }}</h4>
+                                <div class="section-content">
+                                    {% if section.content %}
+                                    {% for item in section.content %}
+                                    {% if item.startswith('•') %}
+                                    <div class="subsection-item">{{ item }}</div>
+                                    {% else %}
+                                    <p>{{ item }}</p>
+                                    {% endif %}
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Additional Section -->
+                    <div class="resume-subsection">
+                        <h3 class="subsection-title">Additional</h3>
+                        {% for section in session_data.formatting.section_analysis.sections %}
+                            {% if section.name|lower not in ['skills', 'technical skills', 'core competencies', 'proficiencies', 'capabilities', 'experience', 'work experience', 'employment history', 'professional experience', 'career history'] %}
+                            <div class="resume-section {% if section.formatting.is_header %}section-header{% endif %}">
+                                <h4 class="section-title">{{ section.name }}</h4>
+                                <div class="section-content">
+                                    {% if section.content %}
+                                    {% for item in section.content %}
+                                    {% if item.startswith('•') %}
+                                    <div class="subsection-item">{{ item }}</div>
+                                    {% else %}
+                                    <p>{{ item }}</p>
+                                    {% endif %}
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                     {% else %}
                     <pre>{{ content }}</pre>
                     {% endif %}

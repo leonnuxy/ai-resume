@@ -1770,3 +1770,54 @@ span[style="color:green"] {
         opacity: 1;
     }
 }
+
+/* ...existing code... */
+
+/* Resume Subsections */
+.resume-subsection {
+    margin-bottom: 2.5rem;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    background-color: #ffffff;
+}
+
+.subsection-title {
+    color: #1a237e;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #667eea;
+    position: relative;
+}
+
+.subsection-title::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 50px;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 2px;
+}
+
+.resume-subsection .resume-section {
+    background-color: #f9fafb;
+    margin-bottom: 1rem;
+}
+
+.resume-subsection .section-title {
+    font-size: 1.1rem;
+    color: #2c3e50;
+    margin-bottom: 0.75rem;
+}
+
+/* Ensure proper spacing between sections */
+.resume-section + .resume-section {
+    margin-top: 1rem;
+}
+
+/* ...rest of existing code... */

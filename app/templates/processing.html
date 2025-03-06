@@ -34,7 +34,26 @@
             <div class="resume-comparison">
                 <div class="resume-panel">
                     <h4>Optimized Resume with Suggestions</h4>
-                    <div id="optimized-text"></div>
+                    <!-- Replaced single div with organized sections -->
+                    <div id="optimized-resume-container">
+                        <!-- Skills Section -->
+                        <div class="resume-subsection">
+                            <h3 class="subsection-title">Skills</h3>
+                            <div id="skills-section"></div>
+                        </div>
+                        
+                        <!-- Experience Section -->
+                        <div class="resume-subsection">
+                            <h3 class="subsection-title">Experience</h3>
+                            <div id="experience-section"></div>
+                        </div>
+                        
+                        <!-- Additional Section -->
+                        <div class="resume-subsection">
+                            <h3 class="subsection-title">Additional</h3>
+                            <div id="additional-section"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -68,6 +87,57 @@
             });
 
             return formattedText;
+        }
+
+        function parseResumeIntoSections(resumeText) {
+            const lines = resumeText.split('\n');
+            let currentSection = '';
+            let sections = {
+                'skills': [],
+                'experience': [],
+                'additional': []
+            };
+            
+            // Default pattern matching for common section titles
+            const skillsPattern = /skills|technical|technologies|proficiencies|competencies|capabilities/i;
+            const experiencePattern = /experience|work|employment|career|professional|job/i;
+            
+            for (let line of lines) {
+                // Basic section detection
+                if (line.trim() && line.trim().length < 50 && !line.trim().startsWith('•')) {
+                    if (skillsPattern.test(line)) {
+                        currentSection = 'skills';
+                        sections[currentSection].push(line);
+                        continue;
+                    } else if (experiencePattern.test(line)) {
+                        currentSection = 'experience';
+                        sections[currentSection].push(line);
+                        continue;
+                    } else if (currentSection === '') {
+                        // If we haven't assigned a section yet, assume additional
+                        currentSection = 'additional';
+                        sections[currentSection].push(line);
+                        continue;
+                    }
+                }
+                
+                // If we have a current section, add the line
+                if (currentSection !== '') {
+                    sections[currentSection].push(line);
+                } else {
+                    // Fallback - assign to additional if no section detected yet
+                    sections['additional'].push(line);
+                }
+            }
+            
+            // If a section is empty, add a placeholder
+            for (let sectionKey in sections) {
+                if (sections[sectionKey].length === 0) {
+                    sections[sectionKey].push('<i>No content found for this section</i>');
+                }
+            }
+            
+            return sections;
         }
 
         function updateAnalysisSections(analysis) {
@@ -122,9 +192,16 @@
                             document.getElementById('loading').style.display = 'none';
                             document.getElementById('results').style.display = 'block';
 
-                            // Format and display optimized text
+                            // Format the optimized text
                             const optimizedText = formatOptimizedText(result.optimized_text, result.analysis);
-                            document.getElementById('optimized-text').innerHTML = optimizedText;
+                            
+                            // Parse the resume into sections
+                            const sections = parseResumeIntoSections(optimizedText);
+                            
+                            // Update each section
+                            document.getElementById('skills-section').innerHTML = sections.skills.join('<br>');
+                            document.getElementById('experience-section').innerHTML = sections.experience.join('<br>');
+                            document.getElementById('additional-section').innerHTML = sections.additional.join('<br>');
 
                             // Update analysis sections
                             updateAnalysisSections(result.analysis);
