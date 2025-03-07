@@ -4,6 +4,7 @@
 <head>
     <title>Resume Analysis - Processing</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/processing.css') }}">
 </head>
 
 <body>
@@ -30,53 +31,67 @@
             </div>
         </div>
 
-        <div class="container">
-            <div class="resume-comparison">
-                <div class="resume-panel">
-                    <h4>Optimized Resume with Suggestions</h4>
-                    <!-- Replaced single div with organized sections -->
-                    <div id="optimized-resume-container">
-                        <!-- Skills Section -->
-                        <div class="resume-subsection">
-                            <h3 class="subsection-title">Skills</h3>
-                            <div id="skills-section"></div>
-                        </div>
-                        
-                        <!-- Experience Section -->
-                        <div class="resume-subsection">
-                            <h3 class="subsection-title">Experience</h3>
-                            <div id="experience-section"></div>
-                        </div>
-                        
-                        <!-- Additional Section -->
-                        <div class="resume-subsection">
-                            <h3 class="subsection-title">Additional</h3>
-                            <div id="additional-section"></div>
+        <div class="side-by-side-container">
+            <div class="container resume-container">
+                <div class="resume-comparison">
+                    <div class="resume-panel">
+                        <h4>Optimized Resume with Suggestions</h4>
+                        <!-- Replaced single div with organized sections -->
+                        <div id="optimized-resume-container">
+                            <!-- Skills Section -->
+                            <div class="resume-subsection">
+                                <h3 class="subsection-title">Skills</h3>
+                                <div id="skills-section"></div>
+                            </div>
+                            
+                            <!-- Experience Section -->
+                            <div class="resume-subsection">
+                                <h3 class="subsection-title">Experience</h3>
+                                <div id="experience-section"></div>
+                            </div>
+                            
+                            <!-- Additional Section -->
+                            <div class="resume-subsection">
+                                <h3 class="subsection-title">Additional</h3>
+                                <div id="additional-section"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="container">
-            <div class="analysis-summary">
-                <div class="section-header">Missing Skills:</div>
-                <ul class="suggestion-list" id="missing-skills-list"></ul>
+            <div class="container analysis-container">
+                <div class="analysis-summary">
+                    <!-- Improved Missing Skills section -->
+                    <div class="missing-skills-section">
+                        <div class="section-header">Missing Skills</div>
+                        <ul class="suggestion-list" id="missing-skills-list"></ul>
+                    </div>
 
-                <div class="section-header">Improvements:</div>
-                <ul class="suggestion-list" id="improvements-list"></ul>
+                    <div class="section-header">Improvements:</div>
+                    <ul class="suggestion-list" id="improvements-list"></ul>
 
-                <div class="section-header">Emphasis Points:</div>
-                <ul class="suggestion-list" id="emphasis-list"></ul>
+                    <div class="section-header">Emphasis Points:</div>
+                    <ul class="suggestion-list" id="emphasis-list"></ul>
 
-                <div class="section-header">General Suggestions:</div>
-                <ul class="suggestion-list" id="general-list"></ul>
+                    <div class="section-header">General Suggestions:</div>
+                    <ul class="suggestion-list" id="general-list"></ul>
+                </div>
             </div>
         </div>
     </div>
 
     <script src="{{ url_for('static', filename='js/processing.js') }}"></script>
     <script>
+        // Helper function to normalize whitespace in text
+        function normalizeWhitespace(text) {
+            // Replace multiple spaces with a single space
+            let normalized = text.replace(/\s+/g, ' ');
+            // Trim leading and trailing whitespace
+            normalized = normalized.trim();
+            return normalized;
+        }
+
         function formatOptimizedText(text, analysis) {
             let formattedText = text;
 
@@ -98,36 +113,99 @@
                 'additional': []
             };
             
-            // Default pattern matching for common section titles
-            const skillsPattern = /skills|technical|technologies|proficiencies|competencies|capabilities/i;
-            const experiencePattern = /experience|work|employment|career|professional|job/i;
+            // More specific pattern matching for section titles
+            const skillsPattern = /\b(skills|technical skills|core competencies|proficiencies|capabilities|technologies|tools|languages|frameworks|platforms|software|certifications)\b/i;
+            const experiencePattern = /\b(experience|work experience|employment history|professional experience|career history|work history|job history|professional background)\b/i;
             
-            for (let line of lines) {
-                // Basic section detection
-                if (line.trim() && line.trim().length < 50 && !line.trim().startsWith('•')) {
-                    if (skillsPattern.test(line)) {
+            // Common patterns for sections that should go to "Additional"
+            const educationPattern = /\b(education|academic|degree|university|college|school)\b/i;
+            const projectsPattern = /\b(projects|personal projects|portfolio)\b/i;
+            const volunteerPattern = /\b(volunteer|community service|pro bono)\b/i;
+            const awardsPattern = /\b(awards|honors|recognition|achievements)\b/i;
+            const additionalPattern = /\b(additional|other|interests|hobbies|languages|references|publications)\b/i;
+            
+            // Flags to track if we've found main sections
+            let foundSkills = false;
+            let foundExperience = false;
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                // Normalize whitespace and remove extra spaces
+                const cleanedLine = normalizeWhitespace(line);
+                
+                // Skip empty lines after cleaning
+                if (!cleanedLine) continue;
+                
+                // Check if this is a section header (shorter than 50 chars, not a bullet point)
+                if (cleanedLine.length < 50 && !cleanedLine.startsWith('•')) {
+                    // Check if it's a skills section
+                    if (skillsPattern.test(cleanedLine)) {
                         currentSection = 'skills';
-                        sections[currentSection].push(line);
+                        foundSkills = true;
+                        sections[currentSection].push(cleanedLine);
                         continue;
-                    } else if (experiencePattern.test(line)) {
+                    } 
+                    // Check if it's an experience section
+                    else if (experiencePattern.test(cleanedLine)) {
                         currentSection = 'experience';
-                        sections[currentSection].push(line);
+                        foundExperience = true;
+                        sections[currentSection].push(cleanedLine);
                         continue;
-                    } else if (currentSection === '') {
-                        // If we haven't assigned a section yet, assume additional
+                    }
+                    // Check if it's definitely an "additional" section
+                    else if (educationPattern.test(cleanedLine) || 
+                             projectsPattern.test(cleanedLine) || 
+                             volunteerPattern.test(cleanedLine) ||
+                             awardsPattern.test(cleanedLine) ||
+                             additionalPattern.test(cleanedLine)) {
                         currentSection = 'additional';
-                        sections[currentSection].push(line);
+                        sections[currentSection].push(cleanedLine);
+                        continue;
+                    }
+                    // If we're already in a section and see a potential new header 
+                    // (capitalized text on its own line), consider it part of the current section
+                    else if (currentSection !== '') {
+                        sections[currentSection].push(cleanedLine);
+                        continue;
+                    }
+                    // Default for unidentified section headers - put in additional
+                    else {
+                        currentSection = 'additional';
+                        sections[currentSection].push(cleanedLine);
                         continue;
                     }
                 }
                 
-                // If we have a current section, add the line
-                if (currentSection !== '') {
-                    sections[currentSection].push(line);
-                } else {
-                    // Fallback - assign to additional if no section detected yet
-                    sections['additional'].push(line);
+                // For bullet points that mention skills or technologies
+                if (cleanedLine.startsWith('•') && 
+                    (cleanedLine.toLowerCase().includes('skill') || 
+                     cleanedLine.toLowerCase().includes('technolog') ||
+                     cleanedLine.toLowerCase().includes('proficien') ||
+                     /\b(java|python|c\+\+|javascript|html|css|sql|database|network|cloud)\b/i.test(cleanedLine))) {
+                    
+                    // If we're not in a section yet, add to skills
+                    if (currentSection === '') {
+                        currentSection = 'skills';
+                        foundSkills = true;
+                    }
                 }
+                
+                // Look for date patterns which typically indicate experience entries
+                const datePattern = /(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|january|february|march|april|june|july|august|september|october|november|december|20\d\d|19\d\d|present|current)/i;
+                if (datePattern.test(cleanedLine) && !skillsPattern.test(cleanedLine)) {
+                    if (currentSection === '') {
+                        currentSection = 'experience';
+                        foundExperience = true;
+                    }
+                }
+                
+                // If we still don't have a section, default to additional
+                if (currentSection === '') {
+                    currentSection = 'additional';
+                }
+                
+                // Add the cleaned current line to its section
+                sections[currentSection].push(cleanedLine);
             }
             
             // If a section is empty, add a placeholder
@@ -141,28 +219,28 @@
         }
 
         function updateAnalysisSections(analysis) {
-            // Update missing skills
+            // Update missing skills - modified for new grid layout
             const missingSkillsList = document.getElementById('missing-skills-list');
             missingSkillsList.innerHTML = analysis.missing_skills.map(skill =>
-                `<li><strong>${skill.skill}</strong>: ${skill.suggestion}</li>`
+                `<li><strong>${normalizeWhitespace(skill.skill)}</strong>${normalizeWhitespace(skill.suggestion)}</li>`
             ).join('');
 
             // Update improvements
             const improvementsList = document.getElementById('improvements-list');
             improvementsList.innerHTML = analysis.improvement_suggestions.map(imp =>
-                `<li><strong>Current:</strong> ${imp.current}<br><strong>Suggested:</strong> ${imp.suggested}<br><em>Reason:</em> ${imp.reason}</li>`
+                `<li><strong>Current:</strong> ${normalizeWhitespace(imp.current)}<br><strong>Suggested:</strong> ${normalizeWhitespace(imp.suggested)}<br><em>Reason:</em> ${normalizeWhitespace(imp.reason)}</li>`
             ).join('');
 
             // Update emphasis points
             const emphasisList = document.getElementById('emphasis-list');
             emphasisList.innerHTML = analysis.emphasis_suggestions.map(emp =>
-                `<li><strong>${emp.experience}</strong><br><em>Why relevant:</em> ${emp.why_relevant}<br><em>How to emphasize:</em> ${emp.how_to_emphasize}</li>`
+                `<li><strong>${normalizeWhitespace(emp.experience)}</strong><br><em>Why relevant:</em> ${normalizeWhitespace(emp.why_relevant)}<br><em>How to emphasize:</em> ${normalizeWhitespace(emp.how_to_emphasize)}</li>`
             ).join('');
 
             // Update general suggestions
             const generalList = document.getElementById('general-list');
             generalList.innerHTML = analysis.general_suggestions.map(sugg =>
-                `<li>${sugg}</li>`
+                `<li>${normalizeWhitespace(sugg)}</li>`
             ).join('');
         }
 
@@ -192,16 +270,27 @@
                             document.getElementById('loading').style.display = 'none';
                             document.getElementById('results').style.display = 'block';
 
-                            // Format the optimized text
-                            const optimizedText = formatOptimizedText(result.optimized_text, result.analysis);
+                            // Format the optimized text and normalize whitespace
+                            let optimizedText = formatOptimizedText(result.optimized_text, result.analysis);
                             
-                            // Parse the resume into sections
-                            const sections = parseResumeIntoSections(optimizedText);
+                            // Add an instruction to the AI that helps with categorization
+                            const aiPrompt = optimizedText + "\n\n<!-- AI Categorization Hint: Please categorize the above resume content into Skills (technical abilities, tools, languages), Experience (work history, jobs), and Additional (education, certifications, projects, personal info, etc) -->";
                             
-                            // Update each section
-                            document.getElementById('skills-section').innerHTML = sections.skills.join('<br>');
-                            document.getElementById('experience-section').innerHTML = sections.experience.join('<br>');
-                            document.getElementById('additional-section').innerHTML = sections.additional.join('<br>');
+                            // Parse the resume into sections with the categorization hint
+                            const sections = parseResumeIntoSections(aiPrompt);
+                            
+                            // Update each section with proper formatting for line breaks
+                            document.getElementById('skills-section').innerHTML = sections.skills.map(line => 
+                                line.includes('<') ? line : `${normalizeWhitespace(line)}`
+                            ).join('<br>');
+                            
+                            document.getElementById('experience-section').innerHTML = sections.experience.map(line => 
+                                line.includes('<') ? line : `${normalizeWhitespace(line)}`
+                            ).join('<br>');
+                            
+                            document.getElementById('additional-section').innerHTML = sections.additional.map(line => 
+                                line.includes('<') ? line : `${normalizeWhitespace(line)}`
+                            ).join('<br>');
 
                             // Update analysis sections
                             updateAnalysisSections(result.analysis);

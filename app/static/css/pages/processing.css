@@ -9,10 +9,27 @@
   margin: 0 auto;
   padding: 2rem;
   margin-bottom: 2rem;
-  width: 100%;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Side-by-side layout for resume and analysis */
+.side-by-side-container {
+  display: flex;
+  gap: 1.5rem;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+.resume-container {
+  flex: 1;
+  width: 50%;
+}
+
+.analysis-container {
+  flex: 1;
+  width: 50%;
 }
 
 /* Processing Page Container */
@@ -77,12 +94,15 @@ p {
   box-shadow: var(--shadow-md);
   padding: var(--spacing-xl);
   margin: var(--spacing-xl) auto;
-  max-width: 1000px;
+  max-width: 1800px;
 }
 
 /* Analysis Summary */
 .analysis-summary {
-  margin: var(--spacing-xl) 0;
+  margin: 0;
+  height: 100%;
+  overflow-y: auto;
+  max-height: calc(100vh - 250px);
 }
 
 /* Analysis Counts */
@@ -100,6 +120,7 @@ p {
   border-radius: var(--border-radius-md);
   border: 1px solid var(--border-light);
   transition: background 0.3s ease;
+  font-size: 0.9rem;
 }
 
 .count-item:hover {
@@ -108,10 +129,7 @@ p {
 
 /* Resume Comparison */
 .resume-comparison {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--spacing-xl);
-  margin-top: var(--spacing-xl);
+  height: 100%;
 }
 
 .resume-panel {
@@ -120,6 +138,11 @@ p {
   border-radius: var(--border-radius-md);
   background: white;
   box-shadow: var(--shadow-sm);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  height: 100%;
+  overflow-y: auto;
+  max-height: calc(100vh - 250px);
 }
 
 .resume-panel h4 {
@@ -127,6 +150,44 @@ p {
   margin-bottom: var(--spacing-md);
   padding-bottom: var(--spacing-sm);
   border-bottom: 1px solid var(--border-light);
+  font-size: 1.1rem;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 10;
+  padding-top: 0.5rem;
+}
+
+/* Resume subsections styling for the processing page */
+#optimized-resume-container .resume-subsection {
+  margin-bottom: 0.8rem; /* Reduced from 1.5rem */
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 0.8rem; /* Reduced from 1rem */
+}
+
+#optimized-resume-container .subsection-title {
+  color: #1a237e;
+  font-size: 1.1rem; /* Reduced from 1.2rem */
+  font-weight: 600;
+  margin-bottom: 0.7rem; /* Reduced from 1rem */
+  padding-bottom: 0.4rem; /* Reduced from 0.5rem */
+  border-bottom: 2px solid #667eea;
+  position: relative;
+}
+
+#skills-section, #experience-section, #additional-section {
+  font-size: 0.85rem;
+  line-height: 1.4; /* Reduced from 1.5 */
+}
+
+/* Spacing between resume sections */
+.resume-section {
+  margin-bottom: 0.8rem; /* Reduced from default */
+}
+
+.section-content p {
+  margin: 0.3rem 0; /* Reduced from default */
 }
 
 /* Highlighted Text */
@@ -143,11 +204,64 @@ p {
   font-weight: bold;
   margin-top: var(--spacing-lg);
   color: var(--text-color);
+  font-size: 1.1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e9ecef;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 10;
+  padding-top: 0.5rem;
 }
 
+/* Missing Skills section styling */
+.missing-skills-section {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  padding: 1rem;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+#missing-skills-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 0.8rem;
+  margin: var(--spacing-md) 0;
+  padding: 0;
+  list-style: none;
+}
+
+#missing-skills-list li {
+  margin-bottom: 0.5rem;
+  padding: 0.8rem;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+  font-size: 0.85rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#missing-skills-list li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  border-color: var(--primary-color);
+}
+
+#missing-skills-list strong {
+  color: #1a237e;
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.9rem;
+}
+
+/* Other suggestion lists */
 .suggestion-list {
   margin: var(--spacing-md) 0;
-  padding-left: var(--spacing-xl);
+  padding-left: 0;
+  list-style: none;
 }
 
 .suggestion-list li {
@@ -156,6 +270,7 @@ p {
   background: #f8f9fa;
   border-radius: var(--border-radius-md);
   border: 1px solid var(--border-light);
+  font-size: 0.85rem;
 }
 
 .suggestion-list li:hover {
@@ -181,19 +296,34 @@ p {
   box-shadow: var(--shadow-md);
 }
 
-/* Analysis Summary */
-
-.analysis-summary {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--spacing-xl);
-  margin-top: var(--spacing-xl);
-}
-
 /* Media Queries */
 @media (max-width: 1200px) {
   .container {
     max-width: 95%;
+  }
+  
+  #missing-skills-list {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+  
+  .side-by-side-container {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .side-by-side-container {
+    flex-direction: column;
+  }
+  
+  .resume-container,
+  .analysis-container {
+    width: 100%;
+  }
+  
+  .container {
+    margin-bottom: 1rem;
+    padding: 1.5rem;
   }
 }
 
@@ -208,6 +338,14 @@ p {
   
   .resume-panel {
     padding: var(--spacing-md);
+  }
+  
+  #missing-skills-list {
+    grid-template-columns: 1fr;
+  }
+  
+  #results {
+    padding: 1rem;
   }
 }
 

@@ -1,0 +1,48 @@
+Noel Ugwoke306-490-2929 | Email | GitHub | Portfolio
+SKILLS
+¥ Full-Stack Development: Microsoft .NET, C#, ASP.NET MVC, HTML5, CSS3, JavaScript, REST APIs.
+¥ Cloud & DevOps: Microsoft Azure (App Services, SQL Database, DevOps), Docker, CI/CD Pipelines.
+¥ Frameworks: Razor Pages, React, Spring Boot, Entity Framework.
+¥ Databases: SQL Server, PostgreSQL, MySQL (query optimization, stored procedures).
+¥ Methodologies: Agile/Scrum, Jira, Confluence, Secure Coding Practices.
+¥ Soft Skills: Cross-functional collaboration, technical documentation, vendor coordination, problem-solving.
+
+EXPERIENCE
+RELEVANT EXPERIENCE
+Full-Stack .NET/Application Developer Ð Association of Professional Engineers and Geoscientists of Alberta (APEGA) December 2022 Ð November 2024
+Skills Used: React, Python, SQL, Azure Cloud, REST APIs, Ready API, Jira, Confluence, Agile/Scrum.
+¥ Developed and maintained full-stack .NET applications, unifying front-end and back-end components to deliver seamless user experiences.
+¥ Migrated legacy systems to Microsoft Azure, leveraging Azure SQL Database and App Services to enhance scalability and security compliance, reducing downtime by 40%.
+¥ Collaborated with third-party vendors to integrate APIs and manage data integrity during system transitions.
+¥ Authored technical documentation, including user guides and deployment procedures, to streamline onboarding.
+¥ Optimized SQL queries and resolved performance bottlenecks, improving data retrieval speeds by 25%.
+
+Web Application Developer Ð Spartan Controls July 2021 Ð November 2022
+Skills Used: React, Python, SQL, AWS (Lambda), PostgreSQL, Terraform, Tableau, Spring Boot.
+¥ Built responsive web applications using .NET and JavaScript, focusing on cross-browser compatibility and user-centric design.
+¥ Automated CI/CD pipelines using Azure DevOps, reducing deployment errors by 30% and accelerating release cycles.
+¥ Coordinated with Agile teams to deliver iterative updates, ensuring alignment with business requirements and user feedback.
+
+EMPLOYMENT HISTORY
+Data Analyst Ð Parkland Fuel Corporation May 2020 Ð January 2021
+Skills Used: AWS (Lambda), Tableau, PowerBI, SQL, Python, ETL Pipelines, Data Modeling, Predictive Analytics.
+¥ Designed automated ETL workflows, leveraged complex SQL queries and built interactive dashboards for data-driven insights.
+¥ Streamlined ETL pipelines to process real-time data, improving accuracy and reducing processing time by 35%.
+
+IT Analyst Intern Ð Alberta Health Services January 2019 Ð April 2020
+Skills Used: ServiceNow, Jira, Visual Studio Code, UiPath, Splunk, SQL, AWS (Lambda), Tableau.
+¥ Migrated legacy scripts to ServiceNow, automated tasks with UiPath and AWS Lambda, optimized SQL queries, analyzed system logs with Splunk, developed Jira dashboards, and created Tableau reports to enhance IT operations.
+
+OTHER
+PROJECTS
+¥ Vaccine Booking Website - Alberta Health Services
+  o Led front-end development using React and TypeScript, creating a user-friendly interface that supported 10,000+ daily bookings.
+¥ Gas Pipeline Monitoring WebApp
+  o Full-stack .NET application with Razor Pages for dynamic UI, integrated with Azure cloud services for real-time data processing.
+
+EDUCATION
+University of Calgary Ð BSc Computer Science 2016 - 2022
+Bow Valley College Ð Diploma Software Development 2015 - 2016
+
+CERTIFICATIONS
+AWS Cloud Practitioner | IBM AI Engineering Professional | Google Cloud Platform Developer

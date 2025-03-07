@@ -3,8 +3,7 @@ import pdfplumber
 from docx import Document
 from flask import current_app as app
 from werkzeug.utils import secure_filename
-
-from app.services.resume_parser import extract_pdf_formatting
+from app.services.resume_parser import parse_pdf, parse_docx, parse_txt
 
 def save_uploaded_file(file) -> tuple:
     """Save uploaded file to instance folder"""
@@ -20,15 +19,11 @@ def parse_uploaded_file(file_path: str, filename: str) -> tuple:
     ext = os.path.splitext(filename)[1][1:].lower()
     
     if ext == 'pdf':
-        with pdfplumber.open(file_path) as pdf:
-            text = "\n".join(page.extract_text() for page in pdf.pages)
-        return text, extract_pdf_formatting(file_path)
+        return parse_pdf(file_path)
     elif ext == 'docx':
-        doc = Document(file_path)
-        return "\n".join(para.text for para in doc.paragraphs), None
+        return parse_docx(file_path), None
     elif ext == 'txt':
-        with open(file_path, 'r', encoding='utf-8') as f:
-            return f.read(), None
+        return parse_txt(file_path), None
     else:
         raise ValueError("Unsupported file type")
 

@@ -1,0 +1,104 @@
+2025-03-05 13:10:45 - app - ERROR - Error in get_task_status: Exception information must include the exception type - /Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/app/routes/analysis.py:177
+Traceback (most recent call last):
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 354, in exception_to_python
+    exc_type = exc['exc_type']
+KeyError: 'exc_type'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/app/routes/analysis.py", line 111, in get_task_status
+    if task.state == 'PENDING':
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/result.py", line 503, in state
+    return self._get_task_meta()['status']
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/result.py", line 442, in _get_task_meta
+    return self._maybe_set_cache(self.backend.get_task_meta(self.id))
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 608, in get_task_meta
+    meta = self._get_task_meta_for(task_id)
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 998, in _get_task_meta_for
+    return self.decode_result(meta)
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 425, in decode_result
+    return self.meta_from_decoded(self.decode(payload))
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 421, in meta_from_decoded
+    meta['result'] = self.exception_to_python(meta['result'])
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 356, in exception_to_python
+    raise ValueError("Exception information must include "
+ValueError: Exception information must include the exception type
+2025-03-05 13:10:45 - app - ERROR - Error in get_task_status: Exception information must include the exception type - /Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/app/routes/analysis.py:177
+Traceback (most recent call last):
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 354, in exception_to_python
+    exc_type = exc['exc_type']
+KeyError: 'exc_type'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/app/routes/analysis.py", line 111, in get_task_status
+    if task.state == 'PENDING':
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/result.py", line 503, in state
+    return self._get_task_meta()['status']
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/result.py", line 442, in _get_task_meta
+    return self._maybe_set_cache(self.backend.get_task_meta(self.id))
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 608, in get_task_meta
+    meta = self._get_task_meta_for(task_id)
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 998, in _get_task_meta_for
+    return self.decode_result(meta)
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 425, in decode_result
+    return self.meta_from_decoded(self.decode(payload))
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 421, in meta_from_decoded
+    meta['result'] = self.exception_to_python(meta['result'])
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 356, in exception_to_python
+    raise ValueError("Exception information must include "
+ValueError: Exception information must include the exception type
+2025-03-05 13:37:54 - app - ERROR - Error in get_task_status: Exception information must include the exception type - /Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/app/routes/analysis.py:177
+Traceback (most recent call last):
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 354, in exception_to_python
+    exc_type = exc['exc_type']
+KeyError: 'exc_type'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/app/routes/analysis.py", line 111, in get_task_status
+    if task.state == 'PENDING':
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/result.py", line 503, in state
+    return self._get_task_meta()['status']
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/result.py", line 442, in _get_task_meta
+    return self._maybe_set_cache(self.backend.get_task_meta(self.id))
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 608, in get_task_meta
+    meta = self._get_task_meta_for(task_id)
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 998, in _get_task_meta_for
+    return self.decode_result(meta)
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 425, in decode_result
+    return self.meta_from_decoded(self.decode(payload))
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 421, in meta_from_decoded
+    meta['result'] = self.exception_to_python(meta['result'])
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 356, in exception_to_python
+    raise ValueError("Exception information must include "
+ValueError: Exception information must include the exception type
+2025-03-05 13:37:54 - app - ERROR - Error in get_task_status: Exception information must include the exception type - /Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/app/routes/analysis.py:177
+Traceback (most recent call last):
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 354, in exception_to_python
+    exc_type = exc['exc_type']
+KeyError: 'exc_type'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/app/routes/analysis.py", line 111, in get_task_status
+    if task.state == 'PENDING':
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/result.py", line 503, in state
+    return self._get_task_meta()['status']
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/result.py", line 442, in _get_task_meta
+    return self._maybe_set_cache(self.backend.get_task_meta(self.id))
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 608, in get_task_meta
+    meta = self._get_task_meta_for(task_id)
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 998, in _get_task_meta_for
+    return self.decode_result(meta)
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 425, in decode_result
+    return self.meta_from_decoded(self.decode(payload))
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 421, in meta_from_decoded
+    meta['result'] = self.exception_to_python(meta['result'])
+  File "/Users/noel/Library/CloudStorage/OneDrive-Personal/Projects/AI/ai-resume/venv/lib/python3.9/site-packages/celery/backends/base.py", line 356, in exception_to_python
+    raise ValueError("Exception information must include "
+ValueError: Exception information must include the exception type

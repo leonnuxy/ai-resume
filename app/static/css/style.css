@@ -432,6 +432,7 @@ textarea {
     font-family: 'Courier New', Courier, monospace;
     line-height: 1.5;
     font-size: 14px;
+    white-space: pre-wrap;
 }
 
 /* Suggestions Preview */
@@ -1698,7 +1699,7 @@ span[style="color:green"] {
     padding: 15px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    white-space: pre-wrap;
+    white-space: normal;
     line-height: 1.6;
 }
 
